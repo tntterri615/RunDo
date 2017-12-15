@@ -1,0 +1,66 @@
+{% extends 'RunDoApp/base.html' %}
+
+{% block content %}
+
+<style>
+
+</style>
+<div class="container">
+    <h2 id="titles">Create Account</h2>
+
+    <form action="{% url 'RunDoApp:registration' %}" method="post">
+        {% csrf_token %}
+        <div id="basicInfo">
+            <div class="form-group col-md-6">
+                <label for="userName"></label>
+                <input type="text" class="form-control" name="user_name" placeholder="user name">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputEmail4"></label>
+              <input type="email" class="form-control" name="user_email" placeholder="Email">
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputPassword4"></label>
+              <input type="password" class="form-control" name="user_password" placeholder="Password">
+            </div>
+        </div>
+
+      <div id="stats">
+          <h4 id="titles">Your Stats:</h4>
+          <div id="genderbutton">
+            <input type="radio" name="gender" id="choice" value="FEMALE" />female <br>
+            <input type="radio" name="gender" id="choice" value="MALE" />male<br>
+          </div>
+          <div class="form-group col-md-2">
+            <label for=""></label>
+            <input type="text" class="form-control" name="age" placeholder="Age">
+          </div>
+          <div class="form-group col-md-2">
+            <label for=""></label>
+            <input type="text" class="form-control" name="height" placeholder="height (inches)">
+          </div>
+          <div class="form-group col-md-2">
+            <label for=""></label>
+            <input type="text" class="form-control" name="weight" placeholder="weight (lbs)">
+          </div>
+          <div class="fitnessdropdwn">
+            <select name="fitnessLevel">
+                <option value="" selected="selected" disabled="disabled">Pick a Fitness Level</option>
+                <option value="1">Newbie</option>
+                <option value="2">Average</option>
+                <option value="3">Athletic</option>
+            </select>
+          </div>
+          <div id="submit">
+            <button type="submit" class="btn btn-secondary btn-md">Submit</button>
+          </div>
+      </div>
+    </form>
+</div>
+
+{% endblock %}
+
+
+
+
+

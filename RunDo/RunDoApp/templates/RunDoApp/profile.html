@@ -1,0 +1,65 @@
+{% extends 'RunDoApp/base.html' %}
+
+
+
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<hr>
+
+<div id="profileStats">
+<h3>Your Stats:</h3>
+    <div>Age: {{profile.age}}</div>
+    <div>Gender: {{profile.gender}}</div>
+    <div>Height: {{profile.height}} inches</div>
+    <div>Weight:{{profile.weight}} lbs</div>
+    <div>Fitness Level: {{fitnessLevelText}}</div>
+</div>
+
+<div id="calculate">
+    <h3>Let's Calculate:</h3>
+    <div id="table">
+        <input type="text" id="quantity" placeholder="quantity"/>
+        <input type="text" id="food" placeholder="food"/>
+
+    </div>
+</div>
+
+<input type="text" id="food_api"/>
+<button id="call_api" class="btn bg-dark text-white">find food</button>
+
+<div id="food_list"></div>
+
+<script>
+
+    document.getElementById('call_api').onclick = function() {
+        let output = document.getElementById("food_list");
+        const query = document.getElementById('food_api').value;
+        while(output.firstChild){
+            output.removeChild(output.firstChild)
+        }
+        pkg = {
+            api_key: 'EUWWE15YLse0ZcPpf3cQ5N71to0pY1S9r4BgzoHH',
+            q: query,
+            format: 'json'
+        };
+        $.ajax({
+            url: "https://api.nal.usda.gov/ndb/search/",
+            data: pkg,
+            dataType: "json",
+            success: function (data) {
+
+                console.log(data);
+                for (let i = 0; i < 10; i++){
+                    let food_item = document.createElement('div');
+                    food_item.innerText = data.list.item[i].name;
+                    output.appendChild(food_item);
+                    console.log(food_item)
+                }
+            }
+        });
+    }
+</script>
+
+{% endblock %}
