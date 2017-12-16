@@ -4,8 +4,6 @@
 
 {% block content %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 <hr>
 
 <div id="profileStats">
@@ -17,49 +15,69 @@
     <div>Fitness Level: {{fitnessLevelText}}</div>
 </div>
 
-<div id="calculate">
+<!--<div id="calculate">
     <h3>Let's Calculate:</h3>
     <div id="table">
         <input type="text" id="quantity" placeholder="quantity"/>
         <input type="text" id="food" placeholder="food"/>
 
     </div>
-</div>
+</div> -->
 
 <input type="text" id="food_api"/>
 <button id="call_api" class="btn bg-dark text-white">find food</button>
 
 <div id="food_list"></div>
 
+
 <script>
+
+
+     function http_get(url, success) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 1) {
+                xhttp.setRequestHeader('X-APP-ID', '{{app_id}}');
+                xhttp.setRequestHeader('X-APP-KEY', '{{app_key}}')
+            } else if (this.readyState === 4 && this.status === 200) {
+                let data = JSON.parse(xhttp.responseText);
+                success(data);
+            } else if (this.readyState === 4 && this.status === 404) {
+                // handle 404
+            }
+        };
+        xhttp.open("GET", url);
+        xhttp.send();
+    }
+
 
     document.getElementById('call_api').onclick = function() {
         let output = document.getElementById("food_list");
-        const query = document.getElementById('food_api').value;
+        const q = document.getElementById('food_api').value;
         while(output.firstChild){
             output.removeChild(output.firstChild)
         }
-        pkg = {
-            api_key: 'EUWWE15YLse0ZcPpf3cQ5N71to0pY1S9r4BgzoHH',
-            q: query,
-            format: 'json'
-        };
-        $.ajax({
-            url: "https://api.nal.usda.gov/ndb/search/",
-            data: pkg,
-            dataType: "json",
-            success: function (data) {
 
-                console.log(data);
-                for (let i = 0; i < 10; i++){
-                    let food_item = document.createElement('div');
-                    food_item.innerText = data.list.item[i].name;
-                    output.appendChild(food_item);
-                    console.log(food_item)
-                }
+        let url = "https://trackapi.nutritionix.com/v2/search/instant/?branded=false&query="+q;
+        http_get(url, function(data){
+            console.log(data);
+            for (let i = 0; i < 10; i++){
+                let food_item = document.createElement('div');
+                food_item.innerText = data.common[i].food_name;
+                food_item.style.color = 'white';
+                output.appendChild(food_item);
             }
         });
-    }
+    };
+        //
+        //     branded: false,
+        //     q: "json",
+        //     success: function (data) {
+        //         console.log(data);
+
+        //     }
+        // };
+
 </script>
 
 {% endblock %}

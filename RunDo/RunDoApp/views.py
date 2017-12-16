@@ -8,6 +8,7 @@ from .choices import FITNESS_CHOICES
 # from django.contrib.auth.decorators import login_required, permission_required
 
 
+from . import secret
 
 def index(request):
     if request.method == 'POST':
@@ -27,7 +28,11 @@ def profile(request):
         if profile.fitnessLevel == choice[0]:
             text = choice[1]
             break
-    return render(request, 'RunDoApp/profile.html', {'profile': profile, 'fitnessLevelText': text})
+    context = {'profile': profile,
+               'fitnessLevelText': text,
+               'app_id':secret.app_id,
+               'app_key':secret.app_key}
+    return render(request, 'RunDoApp/profile.html', context)
 
 
 def logoutUser(request):

@@ -20,7 +20,6 @@ class FoodData(models.Model):
     foodName = models.CharField(max_length=100)            # need to eventually change to input from api**************
     servingSize = models.IntegerField()
     caloriesPerServing = models.IntegerField()
-    totalCalories = models.IntegerField()
     user = models.ForeignKey(User)
 
     def __str__(self):
