@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import UserProfile
+from .models import UserProfile, FoodData
 from .choices import FITNESS_CHOICES
 # from django.contrib.auth.decorators import login_required, permission_required
 
@@ -23,6 +23,22 @@ def index(request):
 
 def profile(request):
     profile = get_object_or_404(UserProfile, user=request.user)
+    if request.method == 'POST':
+        print(request.POST)
+        food_name = request.POST['food_name']
+        serving_calories = request.POST['serving_calories']
+        serving_units = request.POST['serving_units']
+        serving_size = request.POST['serving_size']
+        user_servings = request.POST['user_servings']
+        food = FoodData(user=request.user,
+                        serving_calories=serving_calories,
+                        serving_units=serving_units,
+                        serving_size=serving_size,
+                        user_servings=user_servings,
+                        food_name=food_name,
+                        total_calories=float(serving_calories)*float(serving_size)*float(user_servings))
+        food.save()
+
     text = ''
     for choice in FITNESS_CHOICES:
         if profile.fitnessLevel == choice[0]:
