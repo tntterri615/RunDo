@@ -56,18 +56,39 @@
             output.removeChild(output.firstChild)
         }
 
-        let url = "https://trackapi.nutritionix.com/v2/search/instant/?branded=false&detailed=true&query="+q;
+        //let url = "https://trackapi.nutritionix.com/v2/search/instant/?branded=false&detailed=true&query="+q;
+        let url = "https://trackapi.nutritionix.com/v2/search/instant/?self=false&branded=true&detailed=true&query="+q;
         http_get(url, function(data){
-            // console.log(data);
+            console.log(data);
             document.getElementById('resultsList').style.display = 'block';
+
+            let foods = [];
+            for (let i=0; i<Math.min(5, data.common.length); ++i) {
+                foods.push(data.common[i]);
+            }
+            for (let i=0; i<Math.min(5, data.branded.length); ++i) {
+                foods.push(data.branded[i]);
+            }
+
             let first_option = true;
-            for (let i = 0; i < 10; i++){
+            for (let i = 0; i < foods.length; i++){
                 let food_name = document.createElement('option');
-                let food = data.common[i];
-                food_name.innerText = food.food_name + ", " +  Math.round(food.full_nutrients[4].value) + " calories, " + food.serving_qty + " " + food.serving_unit;
+                let food = foods[i];
+                let calories = 0;
+                for (let i=0; i<food.full_nutrients.length; ++i) {
+                    if (food.full_nutrients[i].attr_id === 208) {
+                        calories = Math.round(food.full_nutrients[i].value);
+                        break;
+                    }
+                }
+
+                food_name.innerText = food.food_name + ", " + calories + " calories, " + food.serving_qty + " " + food.serving_unit;
+                if (food.brand_name) {
+                    food_name.innerText = food.brand_name + ' - ' + food_name.innerText;
+                }
                 food_name.onclick = function () {
                     document.getElementById('food_name').value = food.food_name;
-                    document.getElementById('serving_calories').value = Math.round(food.full_nutrients[4].value);
+                    document.getElementById('serving_calories').value = calories;
                     document.getElementById('serving_size').value = food.serving_qty;
                     document.getElementById('serving_units').value = food.serving_unit;
                 };

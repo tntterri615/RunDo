@@ -32,3 +32,28 @@ class FoodData(models.Model):
     def __str__(self):
         return self.food_name + " " + str(self.total_calories)          # food name is not displayed in database
 
+
+class ExerciseCapacity(models.Model):
+    mets = models.FloatField()
+    description = models.CharField(max_length=30)
+
+
+
+
+
+
+    # fourthree_minmile =
+    # five_minmile =
+    # fivehalf_minmile=
+    # six_minmile =
+    # sixhalf_minmile=
+    # seven_minmile =
+    # sevenhalf_minmile=
+    # eight_minmile =
+    # eighthalf_minmile=
+    # nine_minmile =
+    # ninehalf_minmile=
+    # ten_minmile =
+    # elevenhalf_minmile=
+    # twelve_minmile =
+    # fifteen_minmile=

@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import UserProfile, FoodData
+from .models import UserProfile, FoodData, ExerciseCapacity
 from .choices import FITNESS_CHOICES
 import datetime
 # from django.contrib.auth.decorators import login_required, permission_required
@@ -82,4 +82,3 @@ def viewHistory(request):
 
 
 
-3
