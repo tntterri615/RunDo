@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^logoutUser/$', views.logoutUser, name='logoutUser'),
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^registration/$', views.registration, name='registration'),
-
+    url(r'^viewHistory/$', views.viewHistory, name='viewHistory'),
 ]
 
 

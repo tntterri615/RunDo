@@ -1,6 +1,8 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from .choices import *
+from django.utils import timezone
 
 
 class UserProfile(models.Model):
@@ -24,6 +26,8 @@ class FoodData(models.Model):
     user_servings = models.FloatField()
     total_calories = models.FloatField()
     user = models.ForeignKey(User)
+    timestamp = models.DateTimeField(default=timezone.now)
+
 
     def __str__(self):
         return self.food_name + " " + str(self.total_calories)          # food name is not displayed in database

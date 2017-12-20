@@ -1,0 +1,19 @@
+{% extends 'RunDoApp/base.html' %}
+
+{% block content %}
+
+<ul>
+    {% for history in most_recent_history %}
+       <li>{{history.food_name}}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
+
+
+
+
+
+
+
+

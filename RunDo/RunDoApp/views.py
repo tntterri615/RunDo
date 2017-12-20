@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .models import UserProfile, FoodData
 from .choices import FITNESS_CHOICES
+import datetime
 # from django.contrib.auth.decorators import login_required, permission_required
 
 
@@ -74,7 +75,11 @@ def registration(request):
     return render(request, 'RunDoApp/registration.html')
 
 
+def viewHistory(request):
+    most_recent_history = FoodData.objects.order_by('-timestamp')[:7]
+    return render(request, 'RunDoApp/viewhistory.html', {'most_recent_history': most_recent_history})
 
 
 
 
+3
