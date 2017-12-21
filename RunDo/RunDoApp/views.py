@@ -23,32 +23,19 @@ def index(request):
 
 
 def profile(request):
+    bmr = ((4.536*request.user.userprofile.weight) + (15.88*request.user.userprofile.height) - (5*request.user.userprofile.age) + (5 if request.user.userprofile.gender == 'MALE' else -161))
+    print(bmr)
     profile = get_object_or_404(UserProfile, user=request.user)
-    if request.method == 'POST':
-        print(request.POST)
-        food_name = request.POST['food_name']
-        serving_calories = request.POST['serving_calories']
-        serving_units = request.POST['serving_units']
-        serving_size = request.POST['serving_size']
-        user_servings = request.POST['user_servings']
-        food = FoodData(user=request.user,
-                        serving_calories=serving_calories,
-                        serving_units=serving_units,
-                        serving_size=serving_size,
-                        user_servings=user_servings,
-                        food_name=food_name,
-                        total_calories=float(serving_calories)*float(serving_size)*float(user_servings))
-        food.save()
+    data = FoodData.objects.filter(user=request.user)
+    temp = []
+    for food in data:
+        speed = food.exerciseCapacity
+        temp.append({
+            'food': food,
+            'math': food.calculate()
+        })
 
-    text = ''
-    for choice in FITNESS_CHOICES:
-        if profile.fitnessLevel == choice[0]:
-            text = choice[1]
-            break
-    context = {'profile': profile,
-               'fitnessLevelText': text,
-               'app_id':secret.app_id,
-               'app_key':secret.app_key}
+    context = {'profile': profile, 'data': temp}
     return render(request, 'RunDoApp/profile.html', context)
 
 
@@ -76,8 +63,42 @@ def registration(request):
 
 
 def viewHistory(request):
-    most_recent_history = FoodData.objects.order_by('-timestamp')[:7]
-    return render(request, 'RunDoApp/viewhistory.html', {'most_recent_history': most_recent_history})
+    if request.method == 'POST':
+        print(request.POST)
+        food_name = request.POST['food_name']
+        serving_calories = request.POST['serving_calories']
+        serving_units = request.POST['serving_units']
+        serving_size = request.POST['serving_size']
+        user_servings = request.POST['user_servings']
+        total_calories = float(serving_calories)*float(serving_size)*float(user_servings)
+        runSpeed = get_object_or_404(ExerciseCapacity, id=request.POST['runSpeed'])
+        food = FoodData(user=request.user,
+                        serving_calories=serving_calories,
+                        serving_units=serving_units,
+                        serving_size=serving_size,
+                        user_servings=user_servings,
+                        food_name=food_name,
+                        total_calories=total_calories,
+                        exerciseCapacity=runSpeed
+                        )
+        food.save()
+
+    speed_list = ExerciseCapacity.objects.all()
+    most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:7]
+    profile = get_object_or_404(UserProfile, user=request.user)
+
+    temp = []
+    for food in most_recent_history:
+        speed = food.exerciseCapacity
+        temp.append({
+            'food': food,
+            'math': food.calculate()
+        })
+
+    return render(request, 'RunDoApp/viewhistory.html', {'speed_list': speed_list,
+                                                         'app_id': secret.app_id,
+                                                         'app_key': secret.app_key,
+                                                         'most_recent_history': temp})
 
 
 

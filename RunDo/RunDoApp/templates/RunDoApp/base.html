@@ -29,7 +29,7 @@
                    </li>
 
                    <li class="nav-item">
-                       <a class="nav-link text-secondary" href="{% url 'RunDoApp:viewHistory' %}">View History</a>     <!-- ******need a new html page with user history *********-->
+                       <a class="nav-link text-secondary" href="{% url 'RunDoApp:viewHistory' %}">Calculate</a>     <!-- ******need a new html page with user history *********-->
                    </li>
 
                    {% if request.user.is_authenticated %}
@@ -60,10 +60,10 @@
 <body>
 
 </div>
-    <hr/>
+    <hr style="background-color:#a754ff"/>
     {% block content %}
     {% endblock %}
-    <hr/>
+    <hr style="background-color:#a754ff"/>
     <div id="copyright">(c) rUNDO inc</div>                   <!-- make this stay at bottom of page*****************8 -->
 </body>
 
