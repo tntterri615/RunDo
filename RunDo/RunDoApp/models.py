@@ -17,12 +17,23 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.userName
 
+
+
+class ExerciseCategory(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
 class ExerciseCapacity(models.Model):
     mets = models.FloatField()
     description = models.CharField(max_length=30)
+    category = models.ForeignKey(ExerciseCategory, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.description + ", " + str(self.mets) + " mets"
+
 
 
 class FoodData(models.Model):
@@ -34,19 +45,19 @@ class FoodData(models.Model):
     total_calories = models.FloatField()
     user = models.ForeignKey(User)
     timestamp = models.DateTimeField(default=timezone.now)
-    exerciseCapacity = models.ForeignKey(ExerciseCapacity)
-    # time_to_run = models.FloatField()
-    #
-    # def calculate(self):
-    #     bmr = ((4.536 * self.user.userprofile.weight) + (15.88 * self.user.userprofile.height) - (
-    #             5 * self.user.userprofile.age) + (5 if self.user.userprofile.gender == 'MALE' else -161))
-    #     calories = self.total_calories
-    #     mets = self.exerciseCapacity.mets
-    #     timetorun = calories / (bmr * mets / 24)
-    #     return (timetorun)
+    exerciseCapacity = models.ForeignKey(ExerciseCapacity, on_delete=models.CASCADE)
+    time_to_run = models.FloatField()
+
+    def calculate(self):
+        bmr = ((4.536 * self.user.userprofile.weight) + (15.88 * self.user.userprofile.height) - (
+                5 * self.user.userprofile.age) + (5 if self.user.userprofile.gender == 'MALE' else -161))
+        calories = self.total_calories
+        mets = self.exerciseCapacity.mets
+        self.time_to_run = calories / (bmr * mets / 24)
+
 
     def __str__(self):
-        return self.food_name + " " + str(self.total_calories)          # food name is not displayed in database
+        return self.food_name + " " + str(self.total_calories)
 
 
 
@@ -56,18 +67,6 @@ class FoodData(models.Model):
 
 
 
-    # fourthree_minmile =
-    # five_minmile =
-    # fivehalf_minmile=
-    # six_minmile =
-    # sixhalf_minmile=
-    # seven_minmile =
-    # sevenhalf_minmile=
-    # eight_minmile =
-    # eighthalf_minmile=
-    # nine_minmile =
-    # ninehalf_minmile=
-    # ten_minmile =
-    # elevenhalf_minmile=
-    # twelve_minmile =
-    # fifteen_minmile=
+
+
+

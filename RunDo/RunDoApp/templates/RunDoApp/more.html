@@ -1,0 +1,64 @@
+<!-- views.py -->
+
+swim_speedlist = swimCapacity.objects.all()
+
+def getSport(request):
+    if request.method == POST
+    sportType = get_object_or_404(, id=request.POST['selectSport'])
+
+
+
+<!-- make dropdown -->
+
+
+<select id="selectSport" onchange="chooseSport()">
+    <option value="" selected="selected" disabled="disabled">if your knees hurt, choose a different sport</option>
+    <option id="run_choice">RUN- my knees are great</option>
+    <option id="swim_choice">SWIM</option>
+    <option id="bike_choice">BIKE</option>
+</select>
+
+
+
+<script>
+
+    let swim_dropdown = document.getElementById('swim_dropdown');
+
+    function http_get(url, success) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let data = JSON.parse(xhttp.responseText);
+                success(data);
+            }
+        };
+        xhttp.open("GET", url);
+        xhttp.send();
+    }
+
+
+    function chooseSport() {
+        var mysport = document.getElementById('selectSport').value;
+        alert(mysport);
+    }
+
+    document.getElementById('selectSport').onchange = function(sport) {
+        let user_sport = sport.target.selectedIndex;
+        sport.target.children[user_sport].onchange()
+
+
+        http_get("{% url 'RunDoApp:chooseSport' %}", function(data) {
+            // for (let i=0; i<data.swim_dropdown.length; ++i) {       //created dropdown menu for swim, where do I reference swim model?//
+            //     let option = document.createElement('option');
+            //     option.innerText = data.swim_dropdown[i];
+            //     swim_dropdown.appendChild(option);
+            // }
+        });
+    };
+
+
+
+
+
+
+</script>

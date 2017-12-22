@@ -13,8 +13,22 @@
             <input type="text" id="food_api"/>
             <button id="call_api" class="btn bg-dark text-white">find food</button>
 
-            <form target="" id="resultsList" method="post" style="display:none">
-                <select id="food_list" ></select>
+            <!-- style="display:none" -->
+            <form target="" id="resultsList" method="post" >
+
+                <select id="select_category">
+                    <option value="" selected="selected" disabled="disabled">Select an Exercise</option>
+                    {% for category in categories %}
+                    <option value="{{category.id}}">{{category.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <select id="select_capacity">
+                </select>
+
+
+
+          <!--      <select id="food_list" ></select>
                 {% csrf_token %}
                 <input type="hidden" name="food_name" id="food_name">
                 <input type="hidden" name="serving_calories" id="serving_calories">
@@ -24,9 +38,9 @@
                 <select name="runSpeed">
                     <option value="" selected="selected" disabled="disabled">choose your MPH</option>
                     {% for speed in speed_list%}
-                    <option value="{{speed.id}}">{{speed.description}}</option>
+                        <option value="{{speed.id}}">{{speed.description}}</option>
                     {% endfor %}
-                </select>
+                </select>                                                                                         -->
                 <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
             </form>
         </div>
@@ -34,7 +48,7 @@
             <lh>Recent History</lh>
             <ul class="list-group" style="color:black">
                 {% for history in most_recent_history %}
-                   <li class="list-group-item list-group-item-dark">{{history.food.food_name}}</li>
+                   <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.time_to_run}} hours</li>
                 {% endfor %}
             </ul>
         </div>
@@ -44,12 +58,46 @@
 
 <script>
 
-    document.getElementById('food_list').onchange = function(e) {
-        let index = e.target.selectedIndex;
-        e.target.children[index].onclick();
+    let select_category = document.getElementById('select_category');
+    let select_capacity = document.getElementById('select_capacity');
+
+
+    function http_get(url, success) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let data = JSON.parse(xhttp.responseText);
+                success(data);
+            }
+        };
+        xhttp.open("GET", url);
+        xhttp.send();
+    }
+
+    select_category.onchange = function(e) {
+        let category_id = select_category.options[select_category.selectedIndex].value;
+        http_get("{% url 'RunDoApp:getcategories'%}?category_id="+category_id, function(data) {
+            while (select_capacity.firstChild) {
+                select_capacity.removeChild(select_capacity.firstChild)
+            }
+            for (let i=0; i<data.categories.length; ++i) {
+                let option = document.createElement('option');
+                option.value = data.categories[i].id;
+                option.innerText = data.categories[i].description;
+                select_capacity.appendChild(option);
+            }
+        })
     };
 
-     function http_get(url, success) {
+
+
+
+
+
+    // API / FOOD STUFF
+    // ----------------------------------------------------------------------------
+
+     function http_get_api(url, success) {
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState === 1) {
@@ -75,7 +123,8 @@
 
         //let url = "https://trackapi.nutritionix.com/v2/search/instant/?branded=false&detailed=true&query="+q;
         let url = "https://trackapi.nutritionix.com/v2/search/instant/?self=false&branded=true&detailed=true&query="+q;
-        http_get(url, function(data){
+
+        http_get_api(url, function(data){
             console.log(data);
             document.getElementById('resultsList').style.display = 'block';
 

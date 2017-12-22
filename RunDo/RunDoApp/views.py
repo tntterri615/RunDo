@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import UserProfile, FoodData, ExerciseCapacity
+from .models import UserProfile, FoodData, ExerciseCategory, ExerciseCapacity
 from .choices import FITNESS_CHOICES
 import datetime
 # from django.contrib.auth.decorators import login_required, permission_required
@@ -23,19 +23,12 @@ def index(request):
 
 
 def profile(request):
-    bmr = ((4.536*request.user.userprofile.weight) + (15.88*request.user.userprofile.height) - (5*request.user.userprofile.age) + (5 if request.user.userprofile.gender == 'MALE' else -161))
-    print(bmr)
+    # bmr = ((4.536*request.user.userprofile.weight) + (15.88*request.user.userprofile.height) - (5*request.user.userprofile.age) + (5 if request.user.userprofile.gender == 'MALE' else -161))
+    # print(bmr)
     profile = get_object_or_404(UserProfile, user=request.user)
     data = FoodData.objects.filter(user=request.user)
-    temp = []
-    for food in data:
-        speed = food.exerciseCapacity
-        temp.append({
-            'food': food,
-            'math': food.calculate()
-        })
 
-    context = {'profile': profile, 'data': temp}
+    context = {'profile': profile, 'data': data}
     return render(request, 'RunDoApp/profile.html', context)
 
 
@@ -63,6 +56,7 @@ def registration(request):
 
 
 def viewHistory(request):
+
     if request.method == 'POST':
         print(request.POST)
         food_name = request.POST['food_name']
@@ -71,35 +65,40 @@ def viewHistory(request):
         serving_size = request.POST['serving_size']
         user_servings = request.POST['user_servings']
         total_calories = float(serving_calories)*float(serving_size)*float(user_servings)
-        runSpeed = get_object_or_404(ExerciseCapacity, id=request.POST['runSpeed'])
+        exercise_capacity = get_object_or_404(ExerciseCapacity, id=request.POST['runSpeed'])
         food = FoodData(user=request.user,
-                        serving_calories=serving_calories,
+                        serving_calories=serving_calories,               #need to add type of exercise then speed- LOOP?#
                         serving_units=serving_units,
                         serving_size=serving_size,
                         user_servings=user_servings,
                         food_name=food_name,
                         total_calories=total_calories,
-                        exerciseCapacity=runSpeed
+                        exerciseCapacity=exercise_capacity,
                         )
+        food.calculate()
         food.save()
 
-    speed_list = ExerciseCapacity.objects.all()
     most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:7]
+    print(most_recent_history)
     profile = get_object_or_404(UserProfile, user=request.user)
 
-    temp = []
-    for food in most_recent_history:
-        speed = food.exerciseCapacity
-        temp.append({
-            'food': food,
-            'math': food.calculate()
-        })
-
-    return render(request, 'RunDoApp/viewhistory.html', {'speed_list': speed_list,
-                                                         'app_id': secret.app_id,
+    return render(request, 'RunDoApp/viewhistory.html', {'app_id': secret.app_id,
                                                          'app_key': secret.app_key,
-                                                         'most_recent_history': temp})
+                                                         'most_recent_history': most_recent_history,
+                                                         'categories': ExerciseCategory.objects.order_by('name')})
 
+
+
+def getcategories(request):
+    category_id = request.GET['category_id']
+    category = ExerciseCategory.objects.get(pk=category_id)
+    output = {'categories':[]}
+    for capacity in category.exercisecapacity_set.all():
+        output['categories'].append({
+            'id': capacity.id,
+            'description': capacity.description
+        })
+    return JsonResponse(output)
 
 
 

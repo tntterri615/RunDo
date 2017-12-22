@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^registration/$', views.registration, name='registration'),
     url(r'^viewHistory/$', views.viewHistory, name='viewHistory'),
+    url(r'^getcategories/$', views.getcategories, name='getcategories')
 ]
 
 
