@@ -1,14 +1,27 @@
 {% extends 'RunDoApp/base.html' %}
 
 {% block content %}
+<div class="container-fluid" id="profilepage" >
+    <div class="row">
+        <div class="col-sm-6 text-left list-group-item list-group-item-dark" id="">
+        <h3>Your Stats:</h3>
+            <div>Age: {{profile.age}}</div>
+            <div>Gender: {{profile.gender}}</div>
+            <div>Height: {{profile.height}} inches</div>
+            <div>Weight:{{profile.weight}} lbs</div>
+            <div>Fitness Level: {{fitnessLevelText}}</div>
+           <a type="submit" class="btn btn-secondary btn-md" href="{% url 'RunDoApp:registration' %}">Update Profile</a>
+        </div>
 
-<div id="profileStats">
-<h3>Your Stats:</h3>
-    <div>Age: {{profile.age}}</div>
-    <div>Gender: {{profile.gender}}</div>
-    <div>Height: {{profile.height}} inches</div>
-    <div>Weight:{{profile.weight}} lbs</div>
-    <div>Fitness Level: {{fitnessLevelText}}</div>
+        <div class="col-sm-6 text-right">
+            <ul class="list-group" style="color:black">
+                <li class="list-group-item list-group-item-dark">Recent History</li>
+                {% for history in most_recent_history %}
+                   <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.time_to_run}} hours</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

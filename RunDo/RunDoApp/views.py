@@ -28,7 +28,10 @@ def profile(request):
     profile = get_object_or_404(UserProfile, user=request.user)
     data = FoodData.objects.filter(user=request.user)
 
-    context = {'profile': profile, 'data': data}
+    most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:7]
+    print(most_recent_history)
+
+    context = {'profile': profile, 'data': data, 'most_recent_history': most_recent_history,}
     return render(request, 'RunDoApp/profile.html', context)
 
 
@@ -39,16 +42,16 @@ def logoutUser(request):
 
 def registration(request):
     if request.method == 'POST':
-        userName = request.POST['user_name']
-        email = request.POST['user_email']
-        password = request.POST['user_password']
+        if not request.user.is_authenticated:
+            userName = request.POST['user_name']
+            email = request.POST['user_email']
+            password = request.POST['user_password']
         age = request.POST['age']
         gender = request.POST['gender']
         height = request.POST['height']
         weight = request.POST['weight']
-        fitnessLevel = request.POST['fitnessLevel']
         user = User.objects.create_user(userName, email, password)
-        profile = UserProfile(age=age, gender=gender, height=height, weight=weight, fitnessLevel=int(fitnessLevel), user=user, userName=userName)
+        profile = UserProfile(age=age, gender=gender, height=height, weight=weight, user=user, userName=userName)
         profile.save()
         login(request, user)
         return HttpResponseRedirect(reverse('RunDoApp:profile'))
@@ -64,10 +67,10 @@ def viewHistory(request):
         serving_units = request.POST['serving_units']
         serving_size = request.POST['serving_size']
         user_servings = request.POST['user_servings']
-        total_calories = float(serving_calories)*float(serving_size)*float(user_servings)
-        exercise_capacity = get_object_or_404(ExerciseCapacity, id=request.POST['runSpeed'])
+        total_calories = float(serving_calories)*float(user_servings)
+        exercise_capacity = get_object_or_404(ExerciseCapacity, id=request.POST['capacity'])
         food = FoodData(user=request.user,
-                        serving_calories=serving_calories,               #need to add type of exercise then speed- LOOP?#
+                        serving_calories=serving_calories,
                         serving_units=serving_units,
                         serving_size=serving_size,
                         user_servings=user_servings,
@@ -82,14 +85,14 @@ def viewHistory(request):
     print(most_recent_history)
     profile = get_object_or_404(UserProfile, user=request.user)
 
-    return render(request, 'RunDoApp/viewhistory.html', {'app_id': secret.app_id,
+    return render(request, 'RunDoApp/calculatepage.html', {'app_id': secret.app_id,
                                                          'app_key': secret.app_key,
                                                          'most_recent_history': most_recent_history,
                                                          'categories': ExerciseCategory.objects.order_by('name')})
 
 
 
-def getcategories(request):
+def getCategories(request):
     category_id = request.GET['category_id']
     category = ExerciseCategory.objects.get(pk=category_id)
     output = {'categories':[]}
@@ -100,5 +103,6 @@ def getcategories(request):
         })
     return JsonResponse(output)
 
-
+def savedMeals(request):
+    return HttpResponse('OK')
 

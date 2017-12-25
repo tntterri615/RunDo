@@ -1,0 +1,22 @@
+{% extends 'RunDoApp/base.html' %}
+
+{% block content %}
+
+<div class="col-sm-6 text-right">
+    <ul class="list-group" style="color:black">
+        <li class="list-group-item list-group-item-dark">Recent History</li>
+        {% for history in most_recent_history %}
+           <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.time_to_run}} hours</li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock %}
