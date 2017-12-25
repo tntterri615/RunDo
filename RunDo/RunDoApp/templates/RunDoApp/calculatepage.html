@@ -5,16 +5,19 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm">
-            <div class="fitnessdropdwn">
-
-            </div>
-
 
             <input type="text" id="food_api"/>
             <button id="call_api" class="btn bg-dark text-white">find food</button>
 
-            <!-- style="display:none" -->
-            <form target="" id="resultsList" method="post" >
+            <form target="" id="resultsList" method="post" style="display:none">
+
+                <select id="food_list"></select>
+                {% csrf_token %}
+                <input type="hidden" name="food_name" id="food_name">
+                <input type="hidden" name="serving_calories" id="serving_calories">
+                <input type="hidden" name="serving_units" id="serving_units">
+                <input type="hidden" name="serving_size" id="serving_size">
+                <input type="text" name="user_servings" id="user_servings" placeholder="# of servings" required>
 
                 <select id="select_category">
                     <option value="" selected="selected" disabled="disabled">Select an Exercise</option>
@@ -23,24 +26,9 @@
                     {% endfor %}
                 </select>
 
-                <select id="select_capacity">
+                <select id="select_capacity" name="capacity">
                 </select>
 
-
-
-          <!--      <select id="food_list" ></select>
-                {% csrf_token %}
-                <input type="hidden" name="food_name" id="food_name">
-                <input type="hidden" name="serving_calories" id="serving_calories">
-                <input type="hidden" name="serving_units" id="serving_units">
-                <input type="hidden" name="serving_size" id="serving_size">
-                <input type="text" name="user_servings" id="user_servings" placeholder="# of servings">
-                <select name="runSpeed">
-                    <option value="" selected="selected" disabled="disabled">choose your MPH</option>
-                    {% for speed in speed_list%}
-                        <option value="{{speed.id}}">{{speed.description}}</option>
-                    {% endfor %}
-                </select>                                                                                         -->
                 <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
             </form>
         </div>
@@ -60,6 +48,7 @@
 
     let select_category = document.getElementById('select_category');
     let select_capacity = document.getElementById('select_capacity');
+    let food_list = document.querySelector('#food_list');
 
 
     function http_get(url, success) {
@@ -76,7 +65,7 @@
 
     select_category.onchange = function(e) {
         let category_id = select_category.options[select_category.selectedIndex].value;
-        http_get("{% url 'RunDoApp:getcategories'%}?category_id="+category_id, function(data) {
+        http_get("{% url 'RunDoApp:getCategories'%}?category_id="+category_id, function(data) {
             while (select_capacity.firstChild) {
                 select_capacity.removeChild(select_capacity.firstChild)
             }
@@ -136,45 +125,59 @@
                 foods.push(data.branded[i]);
             }
 
-            let first_option = true;
+            //let first_option = true;
             for (let i = 0; i < foods.length; i++){
-                let food_name = document.createElement('option');
+                let food_option = document.createElement('option');
                 let food = foods[i];
-                let calories = 0;
+                food.calories = 0;
                 for (let i=0; i<food.full_nutrients.length; ++i) {
                     if (food.full_nutrients[i].attr_id === 208) {
-                        calories = Math.round(food.full_nutrients[i].value);
+                        food.calories = Math.round(food.full_nutrients[i].value);
                         break;
                     }
                 }
 
-                food_name.innerText = food.food_name + ", " + calories + " calories, " + food.serving_qty + " " + food.serving_unit;
+                food_option.innerText = food.food_name + ", " + food.calories + " calories, " + food.serving_qty + " " + food.serving_unit;
                 if (food.brand_name) {
-                    food_name.innerText = food.brand_name + ' - ' + food_name.innerText;
+                    food_option.innerText = food.brand_name + ' - ' + food_option.innerText;
                 }
-                food_name.onclick = function () {
-                    document.getElementById('food_name').value = food.food_name;
-                    document.getElementById('serving_calories').value = calories;
-                    document.getElementById('serving_size').value = food.serving_qty;
-                    document.getElementById('serving_units').value = food.serving_unit;
-                };
-                output.appendChild(food_name);
+                food_option.food = food;
+                // food_option.onclick = function () {
+                //     document.getElementById('food_name').value = food.food_name;
+                //     document.getElementById('serving_calories').value = calories;
+                //     document.getElementById('serving_size').value = food.serving_qty;
+                //     document.getElementById('serving_units').value = food.serving_unit;
+                //     console.log(food)
+                // };
+                output.appendChild(food_option);
 
-                if (first_option) {
-                    first_option = false;
-                    food_name.onclick();
-                }
+                // if (first_option) {
+                //     first_option = false;
+                //     food_option.onclick();
+                // }
             }
+
+            food_list.onchange();
 
         });
     };
 
+    food_list.onchange = function() {
+
+        selected_option = food_list.options[food_list.selectedIndex];
+
+        food = selected_option.food;
+        console.log(food);
+        document.getElementById('food_name').value = food.food_name;
+        document.getElementById('serving_calories').value = food.calories;
+        document.getElementById('serving_size').value = food.serving_qty;
+        document.getElementById('serving_units').value = food.serving_unit;
+
+    }
+
 </script>
 
 {% endblock %}
-
-
-
 
 
 
