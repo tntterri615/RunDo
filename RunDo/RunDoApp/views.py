@@ -104,5 +104,5 @@ def getCategories(request):
     return JsonResponse(output)
 
 def savedMeals(request):
-    return HttpResponse('OK')
+    return render(request, 'RunDoApp/savedmeals.html')
 
