@@ -4,7 +4,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm">
+        <div class="col-sm" id="find_food">
 
             <input type="text" id="food_api"/>
             <button id="call_api" class="btn bg-dark text-white">find food</button>
@@ -32,13 +32,12 @@
                 <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
             </form>
         </div>
-        <div class="col-sm text-right">
-            <lh>Recent History</lh>
+        <div class="col-sm text-right" id="saved_meal">
+            <lh>Save Meal</lh>
             <ul class="list-group" style="color:black">
-                {% for history in most_recent_history %}
-                   <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.time_to_run}} hours</li>
-                {% endfor %}
+                   <li class="list-group-item list-group-item-dark">add items here</li>
             </ul>
+            <button id="save_meal" type="submit" class="btn btn-secondary btn-md">save meal</button>
         </div>
     </div>
 </div>
