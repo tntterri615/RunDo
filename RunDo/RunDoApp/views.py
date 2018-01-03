@@ -31,13 +31,24 @@ def profile(request):
     most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:7]
     print(most_recent_history)
 
-    context = {'profile': profile, 'data': data, 'most_recent_history': most_recent_history,}
+    context = {'profile': profile, 'data': data, 'most_recent_history': most_recent_history}
     return render(request, 'RunDoApp/profile.html', context)
 
 
 def logoutUser(request):
     logout(request)
     return HttpResponseRedirect(reverse('RunDoApp:index'))
+
+
+def updateprofile(request):
+    if request.method == 'POST':
+        profile = get_object_or_404(UserProfile, user=request.user)
+        profile.age = request.POST['age']
+        profile.height = request.POST['height']
+        profile.weight = request.POST['weight']
+        profile.save()
+        return HttpResponseRedirect(reverse('RunDoApp:profile'))
+    return render(request, 'RunDoApp/updateprofile.html', {})
 
 
 def registration(request):
@@ -58,7 +69,7 @@ def registration(request):
     return render(request, 'RunDoApp/registration.html')
 
 
-def viewHistory(request):
+def calculatePage(request):
 
     if request.method == 'POST':
         print(request.POST)
@@ -81,7 +92,7 @@ def viewHistory(request):
         food.calculate()
         food.save()
 
-    most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:7]
+    most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:1]
     print(most_recent_history)
     profile = get_object_or_404(UserProfile, user=request.user)
 
@@ -89,7 +100,6 @@ def viewHistory(request):
                                                          'app_key': secret.app_key,
                                                          'most_recent_history': most_recent_history,
                                                          'categories': ExerciseCategory.objects.order_by('name')})
-
 
 
 def getCategories(request):
@@ -102,6 +112,7 @@ def getCategories(request):
             'description': capacity.description
         })
     return JsonResponse(output)
+
 
 def savedMeals(request):
     return render(request, 'RunDoApp/savedmeals.html')

@@ -4,40 +4,57 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm" id="find_food">
+        <div class="col">
+            <!--use api to find food-->
+            <div id="find_food" class="row-sm" >
 
-            <input type="text" id="food_api"/>
-            <button id="call_api" class="btn bg-dark text-white">find food</button>
+                <input type="text" id="food_api"/>
+                <button id="call_api" class="btn bg-dark text-white">find food</button>
 
-            <form target="" id="resultsList" method="post" style="display:none">
+                <form target="" id="resultsList" method="post" style="display:none">
 
-                <select id="food_list"></select>
-                {% csrf_token %}
-                <input type="hidden" name="food_name" id="food_name">
-                <input type="hidden" name="serving_calories" id="serving_calories">
-                <input type="hidden" name="serving_units" id="serving_units">
-                <input type="hidden" name="serving_size" id="serving_size">
-                <input type="text" name="user_servings" id="user_servings" placeholder="# of servings" required>
+                    <select id="food_list"></select>
+                    {% csrf_token %}
+                    <input type="hidden" name="food_name" id="food_name">
+                    <input type="hidden" name="serving_calories" id="serving_calories">
+                    <input type="hidden" name="serving_units" id="serving_units">
+                    <input type="hidden" name="serving_size" id="serving_size">
+                    <input type="text" name="user_servings" id="user_servings" placeholder="# of servings" required>
 
-                <select id="select_category">
-                    <option value="" selected="selected" disabled="disabled">Select an Exercise</option>
-                    {% for category in categories %}
-                    <option value="{{category.id}}">{{category.name}}</option>
-                    {% endfor %}
-                </select>
+                    <!--select your exercise-->
+                    <select id="select_category">
+                        <option value="" selected="selected" disabled="disabled">Select an Exercise</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
+                    </select>
 
-                <select id="select_capacity" name="capacity">
-                </select>
+                    <select id="select_capacity" name="capacity">
+                    </select>
 
-                <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
-            </form>
-        </div>
-        <div class="col-sm text-right" id="saved_meal">
-            <lh>Save Meal</lh>
-            <ul class="list-group" style="color:black">
-                   <li class="list-group-item list-group-item-dark">add items here</li>
-            </ul>
-            <button id="save_meal" type="submit" class="btn btn-secondary btn-md">save meal</button>
+                    <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
+                </form>
+            </div>
+
+                <!--history of food-->
+                <div class="row-sm-6 text-right" id="food_history">
+                    <ul class="list-group" style="color:black">
+                        <li class="list-group-item list-group-item-dark">Results</li>
+                        {% for history in most_recent_history %}
+                           <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.get_readable_time}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!--save a meal-->
+            <div class="col-sm text-right" id="create_meal">
+                <lh>Create A Meal</lh>
+                <ul class="list-group" style="color:black">
+                       <li class="list-group-item list-group-item-dark">add items here</li>
+                </ul>
+                <button id="save_meal" type="submit" class="btn btn-secondary btn-md">save meal</button>
+            </div>
         </div>
     </div>
 </div>

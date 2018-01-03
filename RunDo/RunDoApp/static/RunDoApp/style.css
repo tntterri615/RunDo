@@ -3,12 +3,6 @@ body {
     background-size: cover;
 }
 
-.fitnessdropdwn {
-    padding-left: 15px;
-    font-size: 16px;
-    color: black;
-}
-
 #copyright {
     color: white;
 }
@@ -20,7 +14,6 @@ input {
 body {
     font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
 }
-
 
 #titles {
     color: white;
@@ -48,3 +41,6 @@ body {
     color: white;
 }
 
+#block_content {
+    height: 70%;
+}

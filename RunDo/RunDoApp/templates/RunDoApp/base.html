@@ -23,11 +23,11 @@
 
            <ul class="navbar-nav ml-auto p-2">
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="#">Update Profile<span class="sr-only">(current)</span></a>  <!-- ***** need a 'update/save changes' part of regisration for authenticated profiles -->
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateprofile' %}">Update Profile<span class="sr-only">(current)</span></a>  <!-- ***** need a 'update/save changes' part of regisration for authenticated profiles -->
                </li>
 
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:viewHistory' %}">Calculate</a>     <!-- ******need a new html page with user history *********-->
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:calculatePage' %}">Calculate</a>     <!-- ******need a new html page with user history *********-->
                </li>
 
                <li class="nav-item">
@@ -65,14 +65,16 @@
                 <hr style="background-color:#a754ff"/>
             </div>
 
-            <div>
+            <div id="block_content">
                 {% block content %}
+                <div class="container">
+                </div>
                 {% endblock %}
             </div>
 
-            <div class="col align-content-end">
+            <div class="" id="footer">
                 <hr style="background-color:#a754ff"/>
-                <div id="copyright">(c) rUNDO inc</div>                   <!-- make this stay at bottom of page************ -->
+                <div id="copyright">(c) rUNDO inc</div>
             </div>
         </div>
     </div>

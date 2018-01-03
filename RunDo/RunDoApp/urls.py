@@ -10,8 +10,9 @@ urlpatterns = [
     url(r'^logoutUser/$', views.logoutUser, name='logoutUser'),
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^registration/$', views.registration, name='registration'),
-    url(r'^viewHistory/$', views.viewHistory, name='viewHistory'),
+    url(r'^calculate/$', views.calculatePage, name='calculatePage'),
     url(r'^getCategories/$', views.getCategories, name='getCategories'),
+    url(r'^update/$', views.updateprofile, name='updateprofile'),
     url(r'^savedMeals/$', views.savedMeals, name='savedMeals')
 ]
 

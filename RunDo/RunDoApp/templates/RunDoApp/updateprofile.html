@@ -1,0 +1,29 @@
+{% extends 'RunDoApp/base.html' %}
+
+{% block content %}
+
+<form action="" method="post">
+        {% csrf_token %}
+    <div id="stats">
+          <h4 id="titles">Your Stats:</h4>
+          <div class="form-group col-lg-2 col-md-2 col-sm-2">
+            <label for=""></label>
+            <input type="text" class="form-control" name="age" placeholder="Age">
+          </div>
+          <div class="form-group col-2">
+            <label for=""></label>
+            <input type="text" class="form-control" name="height" placeholder="Height (inches)">
+          </div>
+          <div class="form-group col-md-2">
+            <label for=""></label>
+            <input type="text" class="form-control" name="weight" placeholder="Weight (lbs)">
+          </div>
+
+          <div id="submit">
+            <button type="submit" class="btn btn-secondary btn-md">Submit</button>
+          </div>
+     </div>
+</form>
+
+
+{% endblock %}
