@@ -1,0 +1,67 @@
+{% extends 'RunDoApp/base.html' %}
+
+{% block content %}
+
+<form id="resultsList" method="post" style="">
+    {% csrf_token %}
+    <select id="select_category">
+        <option value="" selected="selected">Select an Exercise</option>
+        {% for category in categories %}
+        <option value="{{category.id}}">{{category.name}}</option>
+        {% endfor %}
+    </select>
+
+    <select id="select_capacity" name="capacity">
+    </select>
+
+    <div class="col-sm-6 text-right">
+        <ul class="list-group" style="color:black">
+            <li class="list-group-item list-group-item-dark">Favorites</li>
+            <li class="list-group-item list-group-item-dark">'favorite foods here'</li>
+        </ul>
+    </div>
+
+    <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
+
+</form>
+
+
+<script>
+
+    let select_category = document.getElementById('select_category');
+    let select_capacity = document.getElementById('select_capacity');
+
+
+    function http_get(url, success) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let data = JSON.parse(xhttp.responseText);
+                success(data);
+            }
+        };
+        xhttp.open("GET", url);
+        xhttp.send();
+    }
+
+    select_category.onchange = function(e) {
+        let category_id = select_category.options[select_category.selectedIndex].value;
+        http_get("{% url 'RunDoApp:getCategories'%}?category_id="+category_id, function(data) {
+            while (select_capacity.firstChild) {
+                select_capacity.removeChild(select_capacity.firstChild)
+            }
+            for (let i=0; i<data.categories.length; ++i) {
+                let option = document.createElement('option');
+                option.value = data.categories[i].id;
+                option.innerText = data.categories[i].description;
+                select_capacity.appendChild(option);
+            }
+        })
+    };
+
+
+</script>
+
+{% endblock %}
+
+

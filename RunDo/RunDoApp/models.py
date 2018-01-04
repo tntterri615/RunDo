@@ -53,11 +53,7 @@ class FoodData(models.Model):
             calories = self.total_calories
             mets = self.exerciseCapacity.mets
             self.time_to_run = calories / (bmr * mets / 24)
-            # stuff = calories / (bmr * mets / 24)
-            # total_minutes = stuff * 60
-            # hours = minutes//60
-            # minutes = minutes%60
-            # self.time_to_run = hours + round(minutes)
+
 
         def __str__(self):
             return self.food_name + " " + str(self.total_calories)
@@ -80,22 +76,6 @@ class FoodData(models.Model):
             if minutes > 0:
                 output += ' and ' + str(minutes) + ' minutes'
             return output
-
-#
-# def hours_to_readable_time(hours):
-#     minutes = hours/60
-#     if minutes < 60:
-#         return str(round(minutes, 2)) + ' minutes'
-#     elif minutes < 60*24:
-#         return str(round(minutes/60, 2)) + ' hours'
-#     elif minutes < 60*24*365:
-#         return str(round(minutes/60/24, 2)) + 'days'
-#     else:
-#         return str(round(minutes/60/24/365, 2)) + ' years'
-#
-
-
-
 
 
 

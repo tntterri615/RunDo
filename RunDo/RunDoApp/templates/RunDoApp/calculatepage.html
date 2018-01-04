@@ -51,9 +51,9 @@
             <div class="col-sm text-right" id="create_meal">
                 <lh>Create A Meal</lh>
                 <ul class="list-group" style="color:black">
-                       <li class="list-group-item list-group-item-dark">add items here</li>
+                   <li class="list-group-item list-group-item-dark">add items here</li>
                 </ul>
-                <button id="save_meal" type="submit" class="btn btn-secondary btn-md">save meal</button>
+                <button id="save_meal" type="submit" class="btn btn-secondary btn-md">Save As Favorite</button>
             </div>
         </div>
     </div>
@@ -79,7 +79,7 @@
         xhttp.send();
     }
 
-    select_category.onchange = function(e) {
+    select_category.onchange = function() {
         let category_id = select_category.options[select_category.selectedIndex].value;
         http_get("{% url 'RunDoApp:getCategories'%}?category_id="+category_id, function(data) {
             while (select_capacity.firstChild) {
@@ -93,9 +93,6 @@
             }
         })
     };
-
-
-
 
 
 
@@ -135,10 +132,14 @@
 
             let foods = [];
             for (let i=0; i<Math.min(5, data.common.length); ++i) {
-                foods.push(data.common[i]);
+                if(data.common[i].hasOwnProperty('full_nutrients')) {
+                    foods.push(data.common[i]);
+                    }
             }
             for (let i=0; i<Math.min(5, data.branded.length); ++i) {
-                foods.push(data.branded[i]);
+                if(data.branded[i].hasOwnProperty('full_nutrients')) {
+                    foods.push(data.branded[i]);
+                }
             }
 
             //let first_option = true;
@@ -146,6 +147,7 @@
                 let food_option = document.createElement('option');
                 let food = foods[i];
                 food.calories = 0;
+
                 for (let i=0; i<food.full_nutrients.length; ++i) {
                     if (food.full_nutrients[i].attr_id === 208) {
                         food.calories = Math.round(food.full_nutrients[i].value);
@@ -171,8 +173,7 @@
                 //     first_option = false;
                 //     food_option.onclick();
                 // }
-            }
-
+}
             food_list.onchange();
 
         });

@@ -28,7 +28,7 @@ def profile(request):
     profile = get_object_or_404(UserProfile, user=request.user)
     data = FoodData.objects.filter(user=request.user)
 
-    most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:7]
+    most_recent_history = FoodData.objects.filter(user=request.user).order_by('-timestamp')[:4]
     print(most_recent_history)
 
     context = {'profile': profile, 'data': data, 'most_recent_history': most_recent_history}
@@ -40,7 +40,7 @@ def logoutUser(request):
     return HttpResponseRedirect(reverse('RunDoApp:index'))
 
 
-def updateprofile(request):
+def updateProfile(request):
     if request.method == 'POST':
         profile = get_object_or_404(UserProfile, user=request.user)
         profile.age = request.POST['age']
@@ -105,7 +105,7 @@ def calculatePage(request):
 def getCategories(request):
     category_id = request.GET['category_id']
     category = ExerciseCategory.objects.get(pk=category_id)
-    output = {'categories':[]}
+    output = {'categories': []}
     for capacity in category.exercisecapacity_set.all():
         output['categories'].append({
             'id': capacity.id,
@@ -114,6 +114,6 @@ def getCategories(request):
     return JsonResponse(output)
 
 
-def savedMeals(request):
-    return render(request, 'RunDoApp/savedmeals.html')
+def favorites(request):
+    return render(request, 'RunDoApp/favorites.html')
 

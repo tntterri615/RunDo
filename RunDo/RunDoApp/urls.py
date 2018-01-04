@@ -12,8 +12,8 @@ urlpatterns = [
     url(r'^registration/$', views.registration, name='registration'),
     url(r'^calculate/$', views.calculatePage, name='calculatePage'),
     url(r'^getCategories/$', views.getCategories, name='getCategories'),
-    url(r'^update/$', views.updateprofile, name='updateprofile'),
-    url(r'^savedMeals/$', views.savedMeals, name='savedMeals')
+    url(r'^update/$', views.updateProfile, name='updateProfile'),
+    url(r'^favorites/$', views.favorites, name='favorites')
 ]
 
 

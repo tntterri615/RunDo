@@ -23,7 +23,7 @@
 
            <ul class="navbar-nav ml-auto p-2">
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateprofile' %}">Update Profile<span class="sr-only">(current)</span></a>  <!-- ***** need a 'update/save changes' part of regisration for authenticated profiles -->
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateProfile' %}">Update Profile<span class="sr-only">(current)</span></a>  <!-- ***** need a 'update/save changes' part of regisration for authenticated profiles -->
                </li>
 
                <li class="nav-item">
@@ -31,7 +31,7 @@
                </li>
 
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:savedMeals' %}">Saved Meals</a>     <!-- ******need a new html page with user history *********-->
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:favorites' %}">Favorites</a>     <!-- ******need a new html page with user history *********-->
                </li>
 
                {% if request.user.is_authenticated %}
