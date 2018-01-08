@@ -44,3 +44,6 @@ body {
 #block_content {
     height: 70%;
 }
+#delete_food {
+    vertical-align: center;
+}
