@@ -17,7 +17,6 @@ class UserProfile(models.Model):
         return self.userName
 
 
-
 class ExerciseCategory(models.Model):
     name = models.CharField(max_length=200)
 
@@ -34,13 +33,12 @@ class ExerciseCapacity(models.Model):
         return self.description + ", " + str(self.mets) + " mets"
 
 
-
 class FoodData(models.Model):
         food_name = models.CharField(max_length=100)
-        serving_size = models.FloatField()
-        serving_units = models.CharField(max_length=30)
+        serving_size = models.FloatField()                 #'3' oz, '5' cup, etc.
+        serving_units = models.CharField(max_length=30)       #tbsp, oz, cup, etc
         serving_calories = models.FloatField()
-        user_servings = models.FloatField()
+        user_servings = models.FloatField()           #how much user ate
         total_calories = models.FloatField()
         user = models.ForeignKey(User)
         timestamp = models.DateTimeField(default=timezone.now)

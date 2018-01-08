@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import UserProfile, FoodData, ExerciseCategory, ExerciseCapacity
 from .choices import FITNESS_CHOICES
 import datetime
-# from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 
 from . import secret
@@ -23,8 +23,6 @@ def index(request):
 
 
 def profile(request):
-    # bmr = ((4.536*request.user.userprofile.weight) + (15.88*request.user.userprofile.height) - (5*request.user.userprofile.age) + (5 if request.user.userprofile.gender == 'MALE' else -161))
-    # print(bmr)
     profile = get_object_or_404(UserProfile, user=request.user)
     data = FoodData.objects.filter(user=request.user)
 
@@ -68,18 +66,17 @@ def registration(request):
         return HttpResponseRedirect(reverse('RunDoApp:profile'))
     return render(request, 'RunDoApp/registration.html')
 
-
+@login_required
 def calculatePage(request):
 
     if request.method == 'POST':
-        print(request.POST)
+        exercise_capacity = get_object_or_404(ExerciseCapacity, id=request.POST['capacity'])
         food_name = request.POST['food_name']
         serving_calories = request.POST['serving_calories']
         serving_units = request.POST['serving_units']
         serving_size = request.POST['serving_size']
         user_servings = request.POST['user_servings']
         total_calories = float(serving_calories)*float(user_servings)
-        exercise_capacity = get_object_or_404(ExerciseCapacity, id=request.POST['capacity'])
         food = FoodData(user=request.user,
                         serving_calories=serving_calories,
                         serving_units=serving_units,
@@ -99,7 +96,8 @@ def calculatePage(request):
     return render(request, 'RunDoApp/calculatepage.html', {'app_id': secret.app_id,
                                                          'app_key': secret.app_key,
                                                          'most_recent_history': most_recent_history,
-                                                         'categories': ExerciseCategory.objects.order_by('name')})
+                                                         'categories': ExerciseCategory.objects.order_by('name'),
+                                                         'profile': profile})
 
 
 def getCategories(request):
@@ -115,5 +113,7 @@ def getCategories(request):
 
 
 def favorites(request):
+    # exercise_capacity = get_object_or_404(ExerciseCapacity, id=request.POST['capacity'])
+
     return render(request, 'RunDoApp/favorites.html')
 
