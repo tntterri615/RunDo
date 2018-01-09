@@ -1,70 +1,122 @@
 {% extends 'RunDoApp/base.html' %}
 
 {% block content %}
+<style>
+    #meal_table {
+        background-color:white;
+        text-align: center;
+    }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <!--use api to find food-->
-            <div id="find_food" class="row-sm" >
+    body {
+        color:black;
+    }
+    ol li * {
+        margin:4px;
+        padding: 2px;
+    }
 
-                <input type="text" id="food_api"/>
-                <button id="call_api" class="btn bg-dark text-white">find food</button>
+    ul li * {
+        margin:4px;
+        padding: 2px;
+    }
 
-                <form target="" id="resultsList" method="post" style="display:none">
+    .bt_delete {
+        cursor:default;
+        font-size:30px;
+        text-align:center;
+        vertical-align: center;
+    }
+    #realtime_calculations {
+        font-size: 25px;
+        text-align:right;
+    }
 
-                    <select id="food_list"></select>
-                    {% csrf_token %}
-                    <input type="hidden" name="food_name" id="food_name">
-                    <input type="hidden" name="serving_calories" id="serving_calories">
-                    <input type="hidden" name="serving_units" id="serving_units">
-                    <input type="hidden" name="serving_size" id="serving_size">
-                    <input type="text" name="user_servings" id="user_servings" placeholder="# of servings" required>
+</style>
+<div class="container-fluid rundo">
 
-                    <!--select your exercise-->
-                    <select id="select_category">
-                        <option value="" selected="selected" disabled="disabled">Select an Exercise</option>
-                        {% for category in categories %}
-                        <option value="{{category.id}}">{{category.name}}</option>
-                        {% endfor %}
-                    </select>
+    <ol class="list-group">
+        <li class="list-group-item-dark">
+            Pick your exercise:
+            <div id="select_exercise" class="dropdown" style="color: white">
+            <!--select your exercise-->
+                <select id="select_category">
+                    <option value="" selected="selected">Select an Exercise</option>
+                    {% for category in categories %}
+                    <option value="{{category.id}}">{{category.name}}</option>
+                    {% endfor %}
+                </select>
 
-                    <select id="select_capacity" name="capacity">
-                    </select>
-
-                    <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
-                </form>
+                <select id="select_capacity" name="capacity" style="display: none">
+                </select>
             </div>
+        </li>
+        <li class="list-group-item-dark">
+            Pick a food:
+            <div id="use_api" style="color: white">
+            <!--use api to find food-->
+                <input type="text" id="food_api" required placeholder="Enter Food"/>
+                <button id="call_api" class="btn btn-secondary btn-md">Find Food</button>
 
-                <!--history of food-->
-                <div class="row-sm-6 text-right" id="food_history">
-                    <ul class="list-group" style="color:black">
-                        <li class="list-group-item list-group-item-dark">Results</li>
-                        {% for history in most_recent_history %}
-                           <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.get_readable_time}}</li>
-                        {% endfor %}
-                    </ul>
+                <select id="food_list" style="display:none"></select>
+                <input type="hidden" name="food_name" id="food_name">
+                <input type="hidden" name="serving_calories" id="serving_calories">
+                <input type="hidden" name="serving_units" id="serving_units">
+                <input type="hidden" name="serving_size" id="serving_size">
+                <input id="user_servings" type="text" name="user_servings" placeholder="# of servings" required style="display:none">
+
+                <button class="btn btn-secondary btn-md" id="bt_food_to_table" style="display:none">Add</button>
+            </div>
+        </li>
+        <li class="list-group-item-dark">
+            <div id="create_a_meal">
+            <!--create a meal-->
+                <table id="meal_table" class="table">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col" id="delete_food">Delete</th>
+                      <th scope="col" id="food_name">Food</th>
+                      <th scope="col" id="serving_size">Serving Size</th>
+                      <th scope="col" id="serving_calories">Calories/Serving</th>
+                      <th scope="col" id="serving_qty"># of Servings</th>
+                      <th scope="col" id="total_calories">Total Calories</th>
+                    </tr>
+                  </thead>
+                </table>
+                <div id="realtime_calculations" style="display: none; float: right">
+                    Time to Exercise: <span id="time_to_run">_</span>
+                    Grand Total: <span id="grand_total">0</span>
                 </div>
             </div>
+        </li>
+        <li class="list-group-item-dark">
+            <button id="bt_save_meal" class="btn btn-secondary btn-md">Save Meal</button>or<button class="btn btn-secondary btn-md">Start Over</button>
+        </li>
+    </ol>
 
-            <!--save a meal-->
-            <div class="col-sm text-right" id="create_meal">
-                <lh>Create A Meal</lh>
-                <ul class="list-group" style="color:black">
-                   <li class="list-group-item list-group-item-dark">add items here</li>
-                </ul>
-                <button id="save_meal" type="submit" class="btn btn-secondary btn-md">Save As Favorite</button>
-            </div>
-        </div>
+    <div id="math_equation" style="font-size: 40px">
+        $$ time to run = {calories\over {bmr*mets / 24}}$$
     </div>
 </div>
 
 
+
 <script>
+
+// get activity and capacity to populate
+// ----------------------------------------------------------------------------
 
     let select_category = document.getElementById('select_category');
     let select_capacity = document.getElementById('select_capacity');
     let food_list = document.querySelector('#food_list');
+    let bt_food_to_table = document.querySelector('#bt_food_to_table');
+    let user_servings = document.getElementById('user_servings');
+    let meal_table = document.querySelector('#meal_table');
+    let grand_total = document.querySelector('#grand_total');
+    let bt_save_meal = document.querySelector('#bt_save_meal');
+
+    let meal = {items:[]};
+
+    let mets = 0;
 
 
     function http_get(url, success) {
@@ -81,25 +133,39 @@
 
     select_category.onchange = function() {
         let category_id = select_category.options[select_category.selectedIndex].value;
+        select_capacity.style.display = 'inline';
         http_get("{% url 'RunDoApp:getCategories'%}?category_id="+category_id, function(data) {
             while (select_capacity.firstChild) {
                 select_capacity.removeChild(select_capacity.firstChild)
             }
-            for (let i=0; i<data.categories.length; ++i) {
+            if (data.categories.length === 0) {
+                select_capacity.style.display = 'none';
+            } else {
+                select_capacity.style.display = 'inline-block';
+            }
+            for (let i=0; i < data.categories.length; ++i) {
                 let option = document.createElement('option');
                 option.value = data.categories[i].id;
                 option.innerText = data.categories[i].description;
                 select_capacity.appendChild(option);
             }
-        })
+            calculate_time();
+        });
+    };
+
+    select_capacity.onchange = function() {
+        let capacity_id = select_capacity.options[select_capacity.selectedIndex].value;
+        http_get("{% url 'RunDoApp:getMets'%}?capacity_id="+capacity_id, function(data) {
+            mets = data;
+            calculate_time();
+        });
     };
 
 
+// API / FOOD STUFF
+// ----------------------------------------------------------------------------
 
-    // API / FOOD STUFF
-    // ----------------------------------------------------------------------------
-
-     function http_get_api(url, success) {
+    function http_get_api(url, success) {
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState === 1) {
@@ -119,6 +185,7 @@
     document.getElementById('call_api').onclick = function() {
         let output = document.getElementById("food_list");
         const q = document.getElementById('food_api').value;
+
         while(output.firstChild){
             output.removeChild(output.firstChild)
         }
@@ -128,13 +195,16 @@
 
         http_get_api(url, function(data){
             console.log(data);
-            document.getElementById('resultsList').style.display = 'block';
+            food_list.style.display = 'inline-block';
+            user_servings.style.display = 'inline-block';
+            bt_food_to_table.style.display = 'inline-block';
 
             let foods = [];
+
             for (let i=0; i<Math.min(5, data.common.length); ++i) {
                 if(data.common[i].hasOwnProperty('full_nutrients')) {
                     foods.push(data.common[i]);
-                    }
+                }
             }
             for (let i=0; i<Math.min(5, data.branded.length); ++i) {
                 if(data.branded[i].hasOwnProperty('full_nutrients')) {
@@ -154,48 +224,137 @@
                         break;
                     }
                 }
-
-                food_option.innerText = food.food_name + ", " + food.calories + " calories, " + food.serving_qty + " " + food.serving_unit;
-                if (food.brand_name) {
-                    food_option.innerText = food.brand_name + ' - ' + food_option.innerText;
-                }
-                food_option.food = food;
-                // food_option.onclick = function () {
-                //     document.getElementById('food_name').value = food.food_name;
-                //     document.getElementById('serving_calories').value = calories;
-                //     document.getElementById('serving_size').value = food.serving_qty;
-                //     document.getElementById('serving_units').value = food.serving_unit;
-                //     console.log(food)
-                // };
-                output.appendChild(food_option);
-
-                // if (first_option) {
-                //     first_option = false;
-                //     food_option.onclick();
-                // }
-}
-            food_list.onchange();
-
-        });
+                 food_option.innerText = food.food_name + ", " + food.calories + " calories, " + food.serving_qty + " " + food.serving_unit;
+                 if (food.brand_name) {
+                     food_option.innerText = food.brand_name + ' - ' + food_option.innerText;
+                 }
+                 food_option.food = food;
+                 // food_option.onclick = function () {
+                 //     document.getElementById('food_name').value = food.food_name;
+                 //     document.getElementById('serving_calories').value = calories;
+                 //     document.getElementById('serving_size').value = food.serving_qty;
+                 //     document.getElementById('serving_units').value = food.serving_unit;
+                 //     console.log(food)
+                 // };
+                 output.appendChild(food_option);
+            }
+        })
     };
 
-    food_list.onchange = function() {
+    bt_food_to_table.onclick = function() {
 
-        selected_option = food_list.options[food_list.selectedIndex];
+        let food_api = document.getElementById('food_api');
+        let food_list = document.getElementById('food_list');
+        let user_servings = document.getElementById('user_servings');
+        let food = food_list.options[food_list.selectedIndex].food;
+        let serving_size = (food.serving_qty + ' ' + food.serving_unit);
+        let calories_per_serving = food.calories;
+        let servings = user_servings.value;
+        let total_calories = calories_per_serving * servings;
+        let tr = document.createElement('tr');
+        let bt_td_delete = document.createElement('td');
+        let td_food = document.createElement('td');
+        let td_serving_size = document.createElement('td');
+        let td_calories_per_serving = document.createElement('td');
+        let td_servings = document.createElement('td');
+        let td_total_calories = document.createElement('td');
 
-        food = selected_option.food;
-        console.log(food);
-        document.getElementById('food_name').value = food.food_name;
-        document.getElementById('serving_calories').value = food.calories;
-        document.getElementById('serving_size').value = food.serving_qty;
-        document.getElementById('serving_units').value = food.serving_unit;
+        let grand_total = document.getElementById('grand_total');
 
+        food_api.value = '';
+        food_list.style.display = 'none';
+        user_servings.style.display = 'none';
+        user_servings.value = '';
+        bt_food_to_table.style.display = 'none';
+
+        bt_td_delete.innerText = '\u00D7';
+        bt_td_delete.className = 'bt_delete';
+        bt_td_delete.onclick = function() {
+            grand_total.innerText = parseInt(grand_total.innerText) - total_calories;
+            this.parentElement.remove();
+            calculate_time();
+        };
+        td_food.innerText = food.food_name;
+        td_serving_size.innerText = serving_size;
+        td_calories_per_serving.innerText = food.calories;
+        td_servings.innerText = servings;
+        td_total_calories.innerText = total_calories;
+
+        tr.appendChild(bt_td_delete);
+        tr.appendChild(td_food);
+        tr.appendChild(td_serving_size);
+        tr.appendChild(td_calories_per_serving);
+        tr.appendChild(td_servings);
+        tr.appendChild(td_total_calories);
+        meal_table.appendChild(tr);
+
+        grand_total.innerText = parseInt(grand_total.innerText) + total_calories;
+
+        realtime_calculations.style.display = 'inline-block';
+        calculate_time();
+
+        meal.items.push({
+            name: food.food_name,
+            serving_size: serving_size
+            // ...
+        })
+
+    };
+
+    //calculate time_to_run------------------------------------------------------------------------------------
+
+    function get_readable_time(time_to_run){
+        let hours = Math.floor(time_to_run);
+        let minutes = Math.round(time_to_run * 60) % 60;
+        let output = '';
+
+        if (hours > 0) {
+            if (hours === 1) {
+                output += '1 hour';
+            } else {
+                output += hours + ' hours';
+            }
+        }
+
+        if (minutes > 0) {
+            if (output !== '') {
+                output += ' ';
+            }
+            if (minutes === 1) {
+                output += '1 minute';
+            } else {
+                output += minutes + ' minutes';
+            }
+        }
+        return output
     }
+
+    function calculate_time(){
+
+        let weight = {{profile.weight}};
+        let height = {{profile.height}};
+        let age = {{profile.age}};
+        let gender = "{{profile.gender}}";
+        let time_to_run = document.getElementById('time_to_run');
+
+        let bmr = ((4.536 * weight) + (15.88 * height) - (5 * age) + ((gender === 'MALE')? 5: -161));
+        let calories = parseInt(grand_total.innerText);
+        let total_time = calories / (bmr * mets / 24);
+        time_to_run.innerText = get_readable_time(total_time);
+        // alert(time_to_run.innerText);
+
+        // alert(get_readable_time(time_to_run.innerText= calories / (bmr * mets / 24)));
+    }
+
+    bt_save_meal.onclick = function() {
+        console.log(meal);
+    }
+
 
 </script>
 
-{% endblock %}
 
+{% endblock %}
 
 
 

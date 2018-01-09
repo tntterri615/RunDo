@@ -8,13 +8,16 @@
    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>    <link rel="icon" href="#">
    <script src="https://use.fontawesome.com/1a2185aed0.js"></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
 </head>
 
 
 <header>
     <div class="">
-        <nav class="navbar navbar-expand-md navbar-light d-flex" style="background-color: rgba(86, 59, 50,0.7);">
-       <a class="navbar-brand text-secondary" href="{% url 'RunDoApp:index' %}">rUNDO</a>
+        <nav class="navbar navbar-expand-md navbar-light d-flex" style="background-color: #3b9187;">
+        <a class="navbar-brand text-secondary" href="{% url 'RunDoApp:index' %}">
+            <img src= "{% static 'RunDoApp/images/rundo_v3.png' %}" height="25">
+        </a>
        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
            <span class="navbar-toggler-icon"></span>
        </button>
@@ -23,15 +26,18 @@
 
            <ul class="navbar-nav ml-auto p-2">
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateProfile' %}">Update Profile<span class="sr-only">(current)</span></a>  <!-- ***** need a 'update/save changes' part of regisration for authenticated profiles -->
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateProfile' %}">About<span class="sr-only">(current)</span></a>
+               </li>
+               <li class="nav-item">
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateProfile' %}">Update Profile<span class="sr-only">(current)</span></a>
                </li>
 
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:calculatePage' %}">Calculate</a>     <!-- ******need a new html page with user history *********-->
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:calculatePage' %}">Calculate</a>
                </li>
 
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:favorites' %}">Favorites</a>     <!-- ******need a new html page with user history *********-->
+                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:favorites' %}">Favorites</a>
                </li>
 
                {% if request.user.is_authenticated %}
@@ -47,7 +53,7 @@
                    </li>
                {% else %}
                    <li class="nav-item">
-                       <a class="nav-link" href="{% url 'RunDoApp:index' %}">Sign in</a>
+                       <a class="nav-link" href="{% url 'RunDoApp:index' %}">Login</a>
                    </li>
                {% endif %}
 
@@ -61,21 +67,23 @@
 
    <div class="container-fluid">
         <div class="">
-            <div class="">
-                <hr style="background-color:#a754ff"/>
-            </div>
 
+            <!--
+            <div id="math_equation" style="font-size: 40px">
+                $$ time to run = {calories\over {bmr*mets / 24}}$$
+            </div>
+            -->
             <div id="block_content">
                 {% block content %}
-                <div class="container">
-                </div>
                 {% endblock %}
             </div>
 
-            <div class="" id="footer">
-                <hr style="background-color:#a754ff"/>
+
+            <div id="footer">
+                <hr style="background-color:#728AB7"/>
                 <div id="copyright">(c) rUNDO inc</div>
             </div>
+
         </div>
     </div>
 </body>

@@ -1,3 +1,234 @@
+{% extends 'RunDoApp/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <!--use api to find food-->
+            <div id="find_food" class="row-sm" >
+
+                <!--select your exercise-->
+                <div>
+                    <select id="select_category">
+                        <option value="" selected="selected">Select an Exercise</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="select_capacity" name="capacity">
+                    </select>
+                </div>
+
+                <div>
+                    <input type="text" id="food_api"/>
+                    <button id="call_api" class="btn bg-dark text-white">find food</button>
+
+                    <form target="" id="resultsList" method="post" style="display:none">
+
+                        <select id="food_list"></select>
+                        {% csrf_token %}
+                        <input type="hidden" name="food_name" id="food_name">
+                        <input type="hidden" name="serving_calories" id="serving_calories">
+                        <input type="hidden" name="serving_units" id="serving_units">
+                        <input type="hidden" name="serving_size" id="serving_size">
+                        <input type="text" name="user_servings" id="user_servings" placeholder="# of servings" required>
+
+                         <!--previous home of 'select your exercise-->
+
+                        <button type="submit" class="btn btn-secondary btn-md">Calculate</button>
+                    </form>
+                </div>
+
+                <!--history of food-->
+                <div class="row-sm-6 text-right" id="food_history">
+                    <ul class="list-group" style="color:black">
+                        <li class="list-group-item list-group-item-dark">Results</li>
+                        {% for history in most_recent_history %}
+                           <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.get_readable_time}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!--save a meal-->
+            <div>
+                <table class="table">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Food</th>
+                      <th scope="col">Serving Size</th>
+                      <th scope="col">Calories/Serving</th>
+                      <th scope="col"># of Servings</th>
+                      <th scope="col">Total Calories</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">bacon</th>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <button id="save_meal" type="submit" class="btn btn-secondary btn-md">Save And Calculate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    let select_category = document.getElementById('select_category');
+    let select_capacity = document.getElementById('select_capacity');
+    let food_list = document.querySelector('#food_list');
+
+
+    function http_get(url, success) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                let data = JSON.parse(xhttp.responseText);
+                success(data);
+            }
+        };
+        xhttp.open("GET", url);
+        xhttp.send();
+    }
+
+    select_category.onchange = function() {
+        let category_id = select_category.options[select_category.selectedIndex].value;
+        http_get("{% url 'RunDoApp:getCategories'%}?category_id="+category_id, function(data) {
+            while (select_capacity.firstChild) {
+                select_capacity.removeChild(select_capacity.firstChild)
+            }
+            if (data.categories.length === 0) {
+                select_capacity.style.display = 'none';
+            } else {
+                select_capacity.style.display = 'block';
+            }
+            for (let i=0; i<data.categories.length; ++i) {
+                let option = document.createElement('option');
+                option.value = data.categories[i].id;
+                option.innerText = data.categories[i].description;
+                select_capacity.appendChild(option);
+            }
+        })
+    };
+
+
+
+    // API / FOOD STUFF
+    // ----------------------------------------------------------------------------
+
+     function http_get_api(url, success) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 1) {
+                xhttp.setRequestHeader('X-APP-ID', '{{app_id}}');
+                xhttp.setRequestHeader('X-APP-KEY', '{{app_key}}')
+            } else if (this.readyState === 4 && this.status === 200) {
+                let data = JSON.parse(xhttp.responseText);
+                success(data);
+            } else if (this.readyState === 4 && this.status === 404) {
+                // handle 404
+            }
+        };
+        xhttp.open("GET", url);
+        xhttp.send();
+    }
+
+    document.getElementById('call_api').onclick = function() {
+        let output = document.getElementById("food_list");
+        const q = document.getElementById('food_api').value;
+        while(output.firstChild){
+            output.removeChild(output.firstChild)
+        }
+
+        //let url = "https://trackapi.nutritionix.com/v2/search/instant/?branded=false&detailed=true&query="+q;
+        let url = "https://trackapi.nutritionix.com/v2/search/instant/?self=false&branded=true&detailed=true&query="+q;
+
+        http_get_api(url, function(data){
+            console.log(data);
+            document.getElementById('resultsList').style.display = 'block';
+
+            let foods = [];
+            for (let i=0; i<Math.min(5, data.common.length); ++i) {
+                if(data.common[i].hasOwnProperty('full_nutrients')) {
+                    foods.push(data.common[i]);
+                    }
+            }
+            for (let i=0; i<Math.min(5, data.branded.length); ++i) {
+                if(data.branded[i].hasOwnProperty('full_nutrients')) {
+                    foods.push(data.branded[i]);
+                }
+            }
+
+            //let first_option = true;
+            for (let i = 0; i < foods.length; i++){
+                let food_option = document.createElement('option');
+                let food = foods[i];
+                food.calories = 0;
+
+                for (let i=0; i<food.full_nutrients.length; ++i) {
+                    if (food.full_nutrients[i].attr_id === 208) {
+                        food.calories = Math.round(food.full_nutrients[i].value);
+                        break;
+                    }
+                }
+
+                food_option.innerText = food.food_name + ", " + food.calories + " calories, " + food.serving_qty + " " + food.serving_unit;
+                if (food.brand_name) {
+                    food_option.innerText = food.brand_name + ' - ' + food_option.innerText;
+                }
+                food_option.food = food;
+                // food_option.onclick = function () {
+                //     document.getElementById('food_name').value = food.food_name;
+                //     document.getElementById('serving_calories').value = calories;
+                //     document.getElementById('serving_size').value = food.serving_qty;
+                //     document.getElementById('serving_units').value = food.serving_unit;
+                //     console.log(food)
+                // };
+                output.appendChild(food_option);
+
+                // if (first_option) {
+                //     first_option = false;
+                //     food_option.onclick();
+                // }
+}
+            food_list.onchange();
+
+        });
+    };
+
+    food_list.onchange = function() {
+
+        selected_option = food_list.options[food_list.selectedIndex];
+
+        food = selected_option.food;
+        console.log(food);
+        document.getElementById('food_name').value = food.food_name;
+        document.getElementById('serving_calories').value = food.calories;
+        document.getElementById('serving_size').value = food.serving_qty;
+        document.getElementById('serving_units').value = food.serving_unit;
+
+    }
+
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
 <a href="{%url 'RunDoApp:registration' %}">Create Account</a>
 
 {% if user.is_authenticated == False %}
@@ -141,47 +372,4 @@
    </div>
 
 </header>
-
-
-#stats {
-    display: flex;
-    flex-direction: column;
-}
-#basicInfo {
-    display: flex;
-    flex-direction: column;
-}
-#genderbutton {
-    padding-left: 15px;
-}
-#fitnessdropdwn {
-    padding-left: 15px;
-    font-size: 16px;
-}
-#submit {
-    padding-left: 15px;
-    padding-top: 15px;
-}
-
- // pkg = {
-        //     api_key: '8307a569626a485f9180ff1b21f97a7f',
-        //     q: query,
-        //     format: 'json'
-        // };
-        // $.ajax({
-        //     url: "https://api.nal.usda.gov/ndb/search/",
-        //     data: pkg,
-        //     dataType: "json",
-        //     success: function (data) {
-        //
-        //         console.log(data);
-        //         for (let i = 0; i < 10; i++){
-        //             let food_item = document.createElement('div');
-        //             food_item.innerText = data.list.item[i].name;
-        //             output.appendChild(food_item);
-        //             console.log(food_item)
-        //         }
-        //     }
-        // });
-
 

@@ -14,7 +14,7 @@
     <select id="select_capacity" name="capacity">
     </select>
 
-    <div class="col-sm-6 text-right">
+    <div class="col-sm-6 text-left">
         <ul class="list-group" style="color:black">
             <li class="list-group-item list-group-item-dark">Favorites</li>
             <li class="list-group-item list-group-item-dark">'favorite foods here'</li>
@@ -44,7 +44,7 @@
         xhttp.send();
     }
 
-    select_category.onchange = function(e) {
+    select_category.onchange = function() {
         let category_id = select_category.options[select_category.selectedIndex].value;
         http_get("{% url 'RunDoApp:getCategories'%}?category_id="+category_id, function(data) {
             while (select_capacity.firstChild) {

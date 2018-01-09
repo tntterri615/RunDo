@@ -111,6 +111,11 @@ def getCategories(request):
         })
     return JsonResponse(output)
 
+def getMets(request):
+    capacity_id = request.GET['capacity_id']
+    capacity = ExerciseCapacity.objects.get(pk=capacity_id)
+    return HttpResponse(capacity.mets)
+
 
 def favorites(request):
     # exercise_capacity = get_object_or_404(ExerciseCapacity, id=request.POST['capacity'])
