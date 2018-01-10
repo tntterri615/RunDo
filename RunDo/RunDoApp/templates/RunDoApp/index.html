@@ -3,39 +3,56 @@
 {% block content %}
 
 <style>
+
+body {
+    background: linear-gradient(rgba(121, 85, 72, 0.35), rgba(121, 85, 72, 0.35)), url("https://i.imgur.com/OdkJXNH.png");
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
 </style>
 
-<div class="container rundo">
-    <div class="row">
-        <div class="col">
-            <div id="intro">
-                <h1>Everybody has cheat days</h1>
-                <h4>Manage yours here</h4>
+<div class="container">
+    <div class="col">
+        <div class="row rundo" style="min-height: 30%; padding-top: 60px;">
+            <div class="row">
 
+                    <div id="intro">
+                        <h1>Everybody has cheat days</h1>
+                        <h4 style="padding-top: 30px">Manage yours here</h4>
+
+                    </div>
+
+
+
+            <div class="row" id="not_logged_in">
+
+                {% if user.is_authenticated == False %}
+
+                    <form action="" method="post">
+                        {% csrf_token %}
+                          <div class="form-group">
+                            <label id="homepagestuff" for="userName">User name</label>
+                            <input  type="text" class="form-control col-md-6" name="user_name" aria-describedby="emailHelp" placeholder="Enter user name">
+                          </div>
+                          <div class="form-group">
+                            <label id="homepagestuff" for="exampleInputPassword1">Password</label>
+                            <input  type="password" class="form-control col-md-6" name="user_password" placeholder="Password">
+                          </div>
+                        <button type="submit" class="btn btn-secondary btn-md">Login</button>
+                        <a id="create_account" href="{%url 'RunDoApp:registration' %}">Create Account</a>
+                    </form>
+                {% endif %}
+            </div>
             </div>
         </div>
 
+        <div class="row">
 
-        <div class="col">
+        hi
 
-            {% if user.is_authenticated == False %}
 
-                <form action="" method="post">
-                    {% csrf_token %}
-                      <div class="form-group">
-                        <label id="homepagestuff" for="userName">User name</label>
-                        <input  type="text" class="form-control col-md-6" name="user_name" aria-describedby="emailHelp" placeholder="Enter user name">
-                      </div>
-                      <div class="form-group">
-                        <label id="homepagestuff" for="exampleInputPassword1">Password</label>
-                        <input  type="password" class="form-control col-md-6" name="user_password" placeholder="Password">
-                      </div>
-                    <button type="submit" class="btn btn-secondary btn-md">Login</button>
-                    <a id="create_account" href="{%url 'RunDoApp:registration' %}">Create Account</a>
-                </form>
-            {% endif %}
         </div>
     </div>
 </div>
-
 {% endblock %}

@@ -2,10 +2,18 @@
 
 {% block content %}
 
+<style>
+body {
+    background: linear-gradient(rgba(121, 85, 72, 0.4), rgba(121, 85, 72, 0.4)), url("https://i.imgur.com/h5JAtCF.jpg?1");
+    background-size: cover;
+}
+</style>
+
+
 <form action="" method="post">
         {% csrf_token %}
     <div id="stats">
-          <h4 id="titles">Update Your Stats:</h4>
+          <h4 id="titles" style="color: white">Update Your Stats:</h4>
           <div class="form-group col-lg-2 col-md-2 col-sm-2">
             <label for=""></label>
             <input type="text" class="form-control" name="age" placeholder="Age">
@@ -20,7 +28,7 @@
           </div>
 
           <div id="submit">
-            <button type="submit" class="btn btn-secondary btn-md">Submit</button>
+            <button type="submit" class="btn btn-light btn-md">Submit</button>
           </div>
      </div>
 </form>

@@ -15,7 +15,7 @@
 <header>
     <div class="">
         <nav class="navbar navbar-expand-md navbar-light d-flex" style="background-color: #3b9187;">
-        <a class="navbar-brand text-secondary" href="{% url 'RunDoApp:index' %}">
+        <a class="navbar-brand text-light" href="{% url 'RunDoApp:index' %}">
             <img src= "{% static 'RunDoApp/images/rundo_v3.png' %}" height="25">
         </a>
        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,23 +26,20 @@
 
            <ul class="navbar-nav ml-auto p-2">
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateProfile' %}">About<span class="sr-only">(current)</span></a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:updateProfile' %}">Update Profile<span class="sr-only">(current)</span></a>
+                   <a class="nav-link text-light" href="{% url 'RunDoApp:about' %}">About<span class="sr-only">(current)</span></a>
                </li>
 
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:calculatePage' %}">Calculate</a>
+                   <a class="nav-link text-light" href="{% url 'RunDoApp:calculatePage' %}">Calculate</a>
                </li>
 
                <li class="nav-item">
-                   <a class="nav-link text-secondary" href="{% url 'RunDoApp:favorites' %}">Favorites</a>
+                   <a class="nav-link text-light" href="{% url 'RunDoApp:favorites' %}">Favorites</a>
                </li>
 
                {% if request.user.is_authenticated %}
-                   <li class="nav-item dropdown">
-                       <a class="nav-link dropdown-toggle text-secondary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   <li class="nav-item dropdown text-light">
+                       <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                          Welcome, {{ user.username }}
                        </a>
                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -67,23 +64,16 @@
 
    <div class="container-fluid">
         <div class="">
-
-            <!--
-            <div id="math_equation" style="font-size: 40px">
-                $$ time to run = {calories\over {bmr*mets / 24}}$$
-            </div>
-            -->
             <div id="block_content">
                 {% block content %}
                 {% endblock %}
             </div>
-
-
+            <!--
             <div id="footer">
                 <hr style="background-color:#728AB7"/>
                 <div id="copyright">(c) rUNDO inc</div>
             </div>
-
+            -->
         </div>
     </div>
 </body>

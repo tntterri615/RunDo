@@ -2,7 +2,15 @@
 
 {% block content %}
 
-<form id="resultsList" method="post" style="">
+<style>
+body {
+    background: linear-gradient(rgba(121, 85, 72, 0.4), rgba(121, 85, 72, 0.4)), url("https://i.imgur.com/h5JAtCF.jpg?1");
+    background-size: cover;
+}
+</style>
+
+
+<form id="resultsList" method="post" style="padding: 10px">
     {% csrf_token %}
     <select id="select_category">
         <option value="" selected="selected">Select an Exercise</option>
@@ -15,9 +23,9 @@
     </select>
 
     <div class="col-sm-6 text-left">
-        <ul class="list-group" style="color:black">
-            <li class="list-group-item list-group-item-dark">Favorites</li>
-            <li class="list-group-item list-group-item-dark">'favorite foods here'</li>
+        <ul class="list-group" style="color:black; padding: 10px;">
+            <li class="list-group-item list-group-item-light">Favorites</li>
+            <li class="list-group-item list-group-item-light">'favorite foods here'</li>
         </ul>
     </div>
 

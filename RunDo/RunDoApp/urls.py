@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^getCategories/$', views.getCategories, name='getCategories'),
     url(r'^update/$', views.updateProfile, name='updateProfile'),
     url(r'^getMets/$', views.getMets, name='getMets'),
+    url(r'^about/$', views.about, name='about'),
     url(r'^favorites/$', views.favorites, name='favorites')
 ]
 

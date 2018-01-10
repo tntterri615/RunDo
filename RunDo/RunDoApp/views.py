@@ -122,3 +122,5 @@ def favorites(request):
 
     return render(request, 'RunDoApp/favorites.html')
 
+def about(request):
+    return render(request, 'RunDoApp/about.html')

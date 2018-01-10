@@ -1,22 +1,31 @@
 {% extends 'RunDoApp/base.html' %}
 
 {% block content %}
-<div class="container-fluid rundo" style="margin-top: 15px">
+
+<style>
+body {
+    background: linear-gradient(rgba(121, 85, 72, 0.4), rgba(121, 85, 72, 0.4)), url("https://i.imgur.com/h5JAtCF.jpg?1");
+    background-size: cover;
+}
+</style>
+
+
+<div class="container-fluid rundo" style="margin-top: 25px">
     <div class="row profile">
-        <div class="col-sm-6 text-left list-group-item list-group-item-dark" id="">
+        <div class="col-sm-6 text-left list-group-item list-group-item-light" id="">
         <h3>Your Stats:</h3>
             <div>Age: {{profile.age}}</div>
             <div>Gender: {{profile.gender}}</div>
             <div>Height: {{profile.height}} inches</div>
             <div>Weight:{{profile.weight}} lbs</div>
-           <a type="submit" class="btn btn-secondary btn-md" href="{% url 'RunDoApp:updateProfile' %}">Update Profile</a>
+           <a type="button submit" class="btn btn-dark btn-md" href="{% url 'RunDoApp:updateProfile' %}" style="margin-top: 5px">Update Profile</a>
         </div>
 
         <div class="col-sm-6 text-right">
             <ul class="list-group" style="color:black">
-                <li class="list-group-item list-group-item-dark">Recent History</li>
+                <li class="list-group-item list-group-item-light">Recent History</li>
                 {% for history in most_recent_history %}
-                   <li class="list-group-item list-group-item-dark">{{history.food_name}} - {{history.get_readable_time}}</li>
+                   <li class="list-group-item list-group-item-light">{{history.food_name}} - {{history.get_readable_time}}</li>
                 {% endfor %}
             </ul>
         </div>

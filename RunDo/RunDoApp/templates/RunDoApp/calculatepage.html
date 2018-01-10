@@ -7,15 +7,18 @@
         text-align: center;
     }
 
-    body {
-        color:black;
+body {
+    background: linear-gradient(rgba(121, 85, 72, 0.4), rgba(121, 85, 72, 0.4)), url("https://i.imgur.com/h5JAtCF.jpg?1");
+    background-size: cover;
+    color:black;
     }
-    ol li * {
-        margin:4px;
-        padding: 2px;
-    }
+    /*ol li * {*/
+        /*margin:4px;*/
+        /*padding: 2px;*/
+    /*}*/
 
     ul li * {
+        list-style-type:none;
         margin:4px;
         padding: 2px;
     }
@@ -34,8 +37,8 @@
 </style>
 <div class="container-fluid rundo">
 
-    <ol class="list-group">
-        <li class="list-group-item-dark">
+    <ul class="list-group" style="list-style-type:none">
+        <li class="list-group-item text-dark" style="background-color: rgb(221, 217, 215); padding: 5px;">
             Pick your exercise:
             <div id="select_exercise" class="dropdown" style="color: white">
             <!--select your exercise-->
@@ -50,12 +53,12 @@
                 </select>
             </div>
         </li>
-        <li class="list-group-item-dark">
+        <li class="list-group-item-dark input-group-text" style="background-color: #c3c1c6; padding: 5px;">
             Pick a food:
             <div id="use_api" style="color: white">
             <!--use api to find food-->
-                <input type="text" id="food_api" required placeholder="Enter Food"/>
-                <button id="call_api" class="btn btn-secondary btn-md">Find Food</button>
+                <input type="text" id="food_api" class="form-control col-md-2" required placeholder="Enter Food"/>
+                <button id="call_api" class="btn btn-light btn-md">Find Food</button>
 
                 <select id="food_list" style="display:none"></select>
                 <input type="hidden" name="food_name" id="food_name">
@@ -64,10 +67,10 @@
                 <input type="hidden" name="serving_size" id="serving_size">
                 <input id="user_servings" type="text" name="user_servings" placeholder="# of servings" required style="display:none">
 
-                <button class="btn btn-secondary btn-md" id="bt_food_to_table" style="display:none">Add</button>
+                <button class="btn btn-light btn-md" id="bt_food_to_table" style="display:none">Add</button>
             </div>
         </li>
-        <li class="list-group-item-dark">
+        <li class="list-group-item" style="background-color: rgb(221, 217, 215); padding: 5px;">
             <div id="create_a_meal">
             <!--create a meal-->
                 <table id="meal_table" class="table">
@@ -88,13 +91,13 @@
                 </div>
             </div>
         </li>
-        <li class="list-group-item-dark">
-            <button id="bt_save_meal" class="btn btn-secondary btn-md">Save Meal</button>or<button class="btn btn-secondary btn-md">Start Over</button>
+        <li class="list-group-item-dark" style="background-color: #c3c1c6; padding: 5px;">
+            <button id="bt_save_meal" class="btn btn-light btn-md">Save Meal</button>or<button class="btn btn-light btn-md">Start Over</button>
         </li>
-    </ol>
+    </ul>
 
-    <div id="math_equation" style="font-size: 40px">
-        $$ time to run = {calories\over {bmr*mets / 24}}$$
+    <div id="math_equation" style="font-size: 40px; color: white;">
+        $$ time \, to \, run = {calories\over {bmr*mets / 24}}$$
     </div>
 </div>
 
