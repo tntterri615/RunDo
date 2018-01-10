@@ -21,38 +21,38 @@ body {
                         <h1>Everybody has cheat days</h1>
                         <h4 style="padding-top: 30px">Manage yours here</h4>
 
-                    </div>
+                        <div class="row" id="not_logged_in" style="margin-top: 30px; margin-left: 2px">
 
+                            {% if user.is_authenticated == False %}
 
-
-            <div class="row" id="not_logged_in">
-
-                {% if user.is_authenticated == False %}
-
-                    <form action="" method="post">
-                        {% csrf_token %}
-                          <div class="form-group">
-                            <label id="homepagestuff" for="userName">User name</label>
-                            <input  type="text" class="form-control col-md-6" name="user_name" aria-describedby="emailHelp" placeholder="Enter user name">
-                          </div>
-                          <div class="form-group">
-                            <label id="homepagestuff" for="exampleInputPassword1">Password</label>
-                            <input  type="password" class="form-control col-md-6" name="user_password" placeholder="Password">
-                          </div>
-                        <button type="submit" class="btn btn-secondary btn-md">Login</button>
-                        <a id="create_account" href="{%url 'RunDoApp:registration' %}">Create Account</a>
-                    </form>
-                {% endif %}
-            </div>
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                      <div class="form-group">
+                                        <label id="homepagestuff" for="userName">User name</label>
+                                        <input  type="text" class="form-control col-lg-6" name="user_name" aria-describedby="emailHelp" placeholder="Enter user name">
+                                      </div>
+                                      <div class="form-group">
+                                        <label id="homepagestuff" for="exampleInputPassword1">Password</label>
+                                        <input  type="password" class="form-control col-lg-6" name="user_password" placeholder="Password">
+                                      </div>
+                                    <button type="submit" class="btn btn-secondary btn-md">Login</button>
+                                    <a id="create_account" href="{%url 'RunDoApp:registration' %}">Create Account</a>
+                                </form>
+                            {% endif %}
+                        </div>
+                        </div>
             </div>
         </div>
 
-        <div class="row">
-
-        hi
-
-
+<!--
+    <div>
+    <p>This is all of us sometimes:</p>
+        <div id="joey_chestnut_clip" class="row" style="margin-top: 400px">
+            <div>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/PIq-iiwVeBs?rel=0&amp;showinfo=0&amp;start=13&amp;stop=21" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+            </div>
         </div>
+-->
     </div>
 </div>
 {% endblock %}

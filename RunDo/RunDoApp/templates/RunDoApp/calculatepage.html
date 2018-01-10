@@ -65,8 +65,7 @@ body {
                 <input type="hidden" name="serving_calories" id="serving_calories">
                 <input type="hidden" name="serving_units" id="serving_units">
                 <input type="hidden" name="serving_size" id="serving_size">
-                <input id="user_servings" type="text" name="user_servings" placeholder="# of servings" required style="display:none">
-
+                <input id="user_servings" type="text" name="user_servings" placeholder="# of servings" style="display:none" required>
                 <button class="btn btn-light btn-md" id="bt_food_to_table" style="display:none">Add</button>
             </div>
         </li>
@@ -81,23 +80,23 @@ body {
                       <th scope="col" id="serving_size">Serving Size</th>
                       <th scope="col" id="serving_calories">Calories/Serving</th>
                       <th scope="col" id="serving_qty"># of Servings</th>
-                      <th scope="col" id="total_calories">Total Calories</th>
+                      <th scope="col" id="total_calories">Calories</th>
                     </tr>
                   </thead>
                 </table>
                 <div id="realtime_calculations" style="display: none; float: right">
                     Time to Exercise: <span id="time_to_run">_</span>
-                    Grand Total: <span id="grand_total">0</span>
+                    Total Calories: <span id="grand_total">0</span>
                 </div>
             </div>
         </li>
         <li class="list-group-item-dark" style="background-color: #c3c1c6; padding: 5px;">
-            <button id="bt_save_meal" class="btn btn-light btn-md">Save Meal</button>or<button class="btn btn-light btn-md">Start Over</button>
+            <button id="bt_save_meal" class="btn btn-light btn-md">Save Meal</button>or<button class="btn btn-light btn-md" href="{% url 'RunDoApp:calculatePage' %}">Start Over</button>
         </li>
     </ul>
 
     <div id="math_equation" style="font-size: 40px; color: white;">
-        $$ time \, to \, run = {calories\over {bmr*mets / 24}}$$
+        $$ time \, to \, exercise = {calories\over {bmr*mets / 24}}$$
     </div>
 </div>
 
@@ -134,6 +133,14 @@ body {
         xhttp.send();
     }
 
+    select_capacity.onchange = function() {
+        let capacity_id = select_capacity.options[select_capacity.selectedIndex].value;
+        http_get("{% url 'RunDoApp:getMets'%}?capacity_id="+capacity_id, function(data) {
+            mets = data;
+            calculate_time();
+        });
+    };
+
     select_category.onchange = function() {
         let category_id = select_category.options[select_category.selectedIndex].value;
         select_capacity.style.display = 'inline';
@@ -152,15 +159,7 @@ body {
                 option.innerText = data.categories[i].description;
                 select_capacity.appendChild(option);
             }
-            calculate_time();
-        });
-    };
-
-    select_capacity.onchange = function() {
-        let capacity_id = select_capacity.options[select_capacity.selectedIndex].value;
-        http_get("{% url 'RunDoApp:getMets'%}?capacity_id="+capacity_id, function(data) {
-            mets = data;
-            calculate_time();
+            select_capacity.onchange();
         });
     };
 
@@ -246,9 +245,18 @@ body {
 
     bt_food_to_table.onclick = function() {
 
+
+
+
         let food_api = document.getElementById('food_api');
         let food_list = document.getElementById('food_list');
         let user_servings = document.getElementById('user_servings');
+
+        if (user_servings.value === ''){
+            alert("Please enter # of servings");
+            return
+        }
+
         let food = food_list.options[food_list.selectedIndex].food;
         let serving_size = (food.serving_qty + ' ' + food.serving_unit);
         let calories_per_serving = food.calories;
@@ -343,6 +351,7 @@ body {
         let bmr = ((4.536 * weight) + (15.88 * height) - (5 * age) + ((gender === 'MALE')? 5: -161));
         let calories = parseInt(grand_total.innerText);
         let total_time = calories / (bmr * mets / 24);
+
         time_to_run.innerText = get_readable_time(total_time);
         // alert(time_to_run.innerText);
 
