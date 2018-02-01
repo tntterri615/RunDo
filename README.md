@@ -16,27 +16,34 @@ Functionality-
 the homepage will prompt you to login or create account
 the profile page will prompt you to input the food you ate, physical stats (age, sex, height, weight), fitness level (how fast you are in mph), and a calculate function
 the user's individual results page will include confirmation of their food, a results table (shows how far they will need to run to burn off food eaten), and a recalculate function that will redirect to their profile page for new input
+
+
 Models-
 
-User profile
-
+User profile:
 age
 sex
 height
 weight
 fitness level (running- mph; other activities- newbie/novice, average, athletic/buff)
-Food data
+
+
+Food data:
 
 serving size
 number of servings
 total calories
+
+
 Schedule
 
-Milestone 1
+Milestone 1-
 create profile to store user data
 food data tables
 figure out how to pull calorie info from a food api
 running/exercise calculations (function)
-Milestone 2
+
+
+Milestone 2-
 add additional types of exercises (swimming, tennis, ultimate frisbee)
 link and push data to Myfitnesspal or similar app tracker
